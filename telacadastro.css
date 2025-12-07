@@ -15,19 +15,7 @@ body {
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  animation: fadeIn 0.8s ease-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  opacity: 1 !important;
 }
 
 /* Contêiner principal */

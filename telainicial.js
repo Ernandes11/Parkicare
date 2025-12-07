@@ -33,6 +33,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     await checkAuth();
     if (currentUser) {
         renderMedicamentos();
+        renderEmergencyContacts(); // New function
         setInterval(checkNotifications, 1000);
     }
 });
@@ -88,6 +89,9 @@ async function renderMedicamentos() {
         let isLate = false;
         if (!med.tomado) {
             if (currentHours > medHours || (currentHours === medHours && currentMinutes > medMinutes)) {
+                isLate = true;
+            } else if (alertedMeds.has(med.id)) {
+                // Defines as late if already alerted and ignored/timed out
                 isLate = true;
             }
         }
@@ -370,11 +374,69 @@ function cancelarEmergencia() {
     if (emergencyInterval) clearInterval(emergencyInterval);
 }
 
+// ---------------------------------------------------------
+// EMERGENCY CONTACTS & LOGIC
+// ---------------------------------------------------------
+
+function renderEmergencyContacts() {
+    if (!currentUser || !currentUser.user_metadata) return;
+
+    const meta = currentUser.user_metadata;
+    const container = document.querySelector('.contact-list-clean');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    // Contact 1
+    if (meta.whatsapp) {
+        container.innerHTML += `
+           <div class="contact-item">
+            <strong>Contato 1</strong>
+            <small>${meta.whatsapp}</small>
+          </div>
+        `;
+    }
+
+    // Contact 2
+    if (meta.whatsapp2) {
+        container.innerHTML += `
+           <div class="contact-item">
+            <strong>Contato 2</strong>
+            <small>${meta.whatsapp2}</small>
+          </div>
+        `;
+    }
+}
+
 function enviarEmergencia() {
     cancelarEmergencia();
-    // WhatsApp Panic Message
-    const message = "SOCORRO! Preciso de ajuda urgente!";
-    const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
 
-    window.open(url, '_blank');
+    if (!currentUser || !currentUser.user_metadata) {
+        alert("Erro: Usuário não identificado.");
+        return;
+    }
+
+    const meta = currentUser.user_metadata;
+    const message = "SOCORRO! Preciso de ajuda urgente!";
+    const encodedMsg = encodeURIComponent(message);
+
+    // Prioritize Contact 1
+    if (meta.whatsapp) {
+        const url1 = `https://wa.me/55${meta.whatsapp}?text=${encodedMsg}`; // Assuming BR code 55 for simplicity
+        window.open(url1, '_blank');
+    }
+
+    // Process Contact 2 (Browser might block specific popup, but we try)
+    if (meta.whatsapp2) {
+        setTimeout(() => {
+            const url2 = `https://wa.me/55${meta.whatsapp2}?text=${encodedMsg}`;
+            window.open(url2, '_blank');
+        }, 1000);
+    }
+
+    // Fallback if no contacts
+    if (!meta.whatsapp && !meta.whatsapp2) {
+        const url = `https://wa.me/?text=${encodedMsg}`;
+        window.open(url, '_blank');
+    }
 }

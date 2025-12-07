@@ -22,7 +22,9 @@ if (form) {
     const nome = document.getElementById('nome').value.trim();
     const email = document.getElementById('email').value.trim();
     const senhaValor = senha.value.trim();
+    const confirmarSenha = document.getElementById('confirmar_senha').value.trim();
     const whatsapp = document.getElementById('whatsapp').value.trim();
+    const whatsapp2 = document.getElementById('whatsapp2').value.trim();
 
     let hasError = false;
     const showError = (fieldId, message) => {
@@ -35,7 +37,10 @@ if (form) {
     if (!nome) showError('nome', 'Preencha o nome.');
     if (!email || !/\S+@\S+\.\S+/.test(email)) showError('email', 'Email inválido.');
     if (!senhaValor || senhaValor.length < 6) showError('senha', 'Senha deve ter no mínimo 6 caracteres.');
+    if (senhaValor !== confirmarSenha) showError('confirmar-senha', 'As senhas não coincidem.');
+
     if (!whatsapp || !/^[0-9]{10,11}$/.test(whatsapp)) showError('whatsapp', 'Número inválido (apenas números, DDD+Numero).');
+    if (whatsapp2 && !/^[0-9]{10,11}$/.test(whatsapp2)) showError('whatsapp2', 'Número inválido (apenas números, DDD+Numero).');
 
     if (hasError) return;
 
@@ -52,7 +57,8 @@ if (form) {
         options: {
           data: {
             full_name: nome,
-            whatsapp: whatsapp
+            whatsapp: whatsapp,
+            whatsapp2: whatsapp2
           }
         }
       });
