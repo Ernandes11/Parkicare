@@ -1,6 +1,5 @@
 # ParkiCare
 
-![Badge de Status](img.shields.io)
 
 ## 🌟 Objetivo do Projeto
 
