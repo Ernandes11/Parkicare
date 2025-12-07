@@ -82,7 +82,7 @@ async function renderMedicamentos() {
         return;
     }
 
-    medicamentos.forEach((med) => {
+    medicamentos.forEach((med, index) => {
         const [medHours, medMinutes] = med.horario.split(':').map(Number);
 
         let isLate = false;
@@ -107,6 +107,9 @@ async function renderMedicamentos() {
 
         const div = document.createElement('div');
         div.className = cardClass;
+        // Stagger animation
+        div.style.animationDelay = `${index * 0.1}s`;
+
         if (!med.tomado && !isLate) {
             div.style.borderLeftColor = '#3498db';
         }

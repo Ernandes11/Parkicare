@@ -49,7 +49,7 @@ if (form) {
 
         } catch (err) {
             console.error("Erro login:", err);
-            showError('senha', 'Erro ao entrar: Email ou senha incorretos.');
+            showError('senha', 'Erro: ' + (err.message || 'Email ou senha incorretos.'));
         } finally {
             const btn = form.querySelector('button');
             if (btn) {

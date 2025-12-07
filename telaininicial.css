@@ -3,6 +3,58 @@ body {
   background-color: #fefeff;
   margin: 0;
   padding: 0;
+  animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  50% {
+    transform: scale(1.03);
+    box-shadow: 0 6px 10px rgba(255, 75, 75, 0.4);
+  }
+
+  100% {
+    transform: scale(1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .container {
@@ -47,6 +99,14 @@ p.subtitle {
   font-size: 16px;
   margin: 24px auto;
   cursor: pointer;
+  animation: pulse 2.5s infinite ease-in-out;
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+.btn-emergency:hover {
+  animation: none;
+  transform: scale(1.05);
+  background-color: #ff3333;
 }
 
 /* Título de seção */
@@ -68,6 +128,14 @@ p.subtitle {
   align-items: center;
   box-shadow: 0 2px 4px rgba(23, 5, 129, 0.1);
   border-left: 6px solid;
+  /* Animation for entry */
+  animation: slideUp 0.5s ease-out backwards;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.med-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(23, 5, 129, 0.2);
 }
 
 .med-card.red {
@@ -154,6 +222,7 @@ p.subtitle {
   max-width: 320px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   font-family: 'Segoe UI', sans-serif;
+  animation: zoomIn 0.3s ease-out;
 }
 
 /* Modal Emergência Redesign */

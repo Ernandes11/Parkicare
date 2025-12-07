@@ -15,6 +15,19 @@ body {
   align-items: center;
   justify-content: center;
   min-height: 100vh;
+  animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Contêiner principal */
@@ -23,8 +36,8 @@ body {
   max-width: 380px;
   background: #fffff2;
   border-radius: 20px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  padding: 30px; 
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 30px;
   aspect-ratio: 9 / 16;
   overflow-y: auto;
 }
@@ -32,7 +45,8 @@ body {
 .form-box {
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; /* ALINHA O CONTEÚDO NO TOPO */
+  justify-content: flex-start;
+  /* ALINHA O CONTEÚDO NO TOPO */
   height: 100%;
   text-align: center;
 }
@@ -40,20 +54,23 @@ body {
 h1 {
   color: #2b7a0b;
   font-size: 1.5rem;
-  margin-top: 15px; /* Adiciona uma margem acima do título */
-  margin-bottom: 5px; 
+  margin-top: 15px;
+  /* Adiciona uma margem acima do título */
+  margin-bottom: 5px;
 }
 
 p {
   color: #3c763d;
   font-size: 0.9rem;
-  margin-bottom: 30px; /* Aumenta o espaço após o parágrafo de introdução */
+  margin-bottom: 30px;
+  /* Aumenta o espaço após o parágrafo de introdução */
 }
 
 /* Estilo para o grupo de input */
 .input-group {
   position: relative;
-  margin-bottom: 12px; /* Padroniza o espaçamento entre os campos */
+  margin-bottom: 12px;
+  /* Padroniza o espaçamento entre os campos */
 }
 
 input {
@@ -83,17 +100,20 @@ input {
   right: 12px;
   top: 50%;
   transform: translateY(-50%);
-  width: 22px; /* A largura do ícone único */
-  height: 22px; /* A altura do ícone único */
+  width: 22px;
+  /* A largura do ícone único */
+  height: 22px;
+  /* A altura do ícone único */
   cursor: pointer;
   opacity: 0.7;
   transition: opacity 0.2s ease;
-  
+
   /* Configura a imagem de sprite como fundo */
   background-image: url('olho.png');
-  background-size: 44px 22px; /* O tamanho total da imagem de sprite */
+  background-size: 44px 22px;
+  /* O tamanho total da imagem de sprite */
   background-repeat: no-repeat;
-  
+
   /* Define a posição inicial para o olho fechado */
   background-position: 0 0;
 }
@@ -105,7 +125,8 @@ input {
 /* Nova classe para o estado do olho aberto */
 .password-field .eye.active {
   /* Move a posição do fundo para mostrar o ícone do olho aberto */
-  background-position: -22px 0; /* Move a imagem 22px para a esquerda */
+  background-position: -22px 0;
+  /* Move a imagem 22px para a esquerda */
 }
 
 button {
@@ -118,13 +139,18 @@ button {
   font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
-  transition: 0.3s;
-  margin-top: auto; /* Empurra o botão para a parte inferior */
+  transition: all 0.3s ease;
+  margin-top: auto;
+  /* Empurra o botão para a parte inferior */
+  box-shadow: 0 4px 6px rgba(255, 92, 92, 0.3);
 }
 
 button:hover {
   background-color: #ff4040;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(255, 92, 92, 0.4);
 }
+
 button:active {
   transform: scale(0.98);
-}    
+}

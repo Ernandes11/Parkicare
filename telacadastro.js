@@ -61,8 +61,13 @@ if (form) {
         throw error;
       }
 
-      alert('Conta criada com sucesso! Você será redirecionado.');
-      window.location.href = 'telainicial.html';
+      if (data.session) {
+        alert('Conta criada com sucesso! Você será redirecionado.');
+        window.location.href = 'telainicial.html';
+      } else if (data.user && !data.session) {
+        alert('Conta criada! Por favor, verifique seu email para confirmar o cadastro antes de fazer login.');
+        window.location.href = 'telalogin.html';
+      }
 
     } catch (err) {
       console.error("Erro cadastro:", err);
