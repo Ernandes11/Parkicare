@@ -1,0 +1,145 @@
+/* Reset básico */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+/* Fundo vertical 9:16 */
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f9ffe9;
+  height: 100vh;
+}
+
+.container {
+  width: 360px; /* proporção tipo celular (9:16) */
+  height: 640px;
+  background-color: #fffde8;
+  border-radius: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+/* Logo */
+.logo-area {
+  text-align: center;
+  /* Margem aumentada para baixar a logo */
+  margin-top: 80px; 
+  animation: slideDown 1s ease-out;
+}
+
+.logo {
+  width: 70px;
+  height: auto;
+  opacity: 0;
+  animation: fadeIn 1s ease-in forwards;
+  animation-delay: 0.3s;
+}
+
+.titulo {
+  font-size: 22px;
+  margin-top: 8px;
+  opacity: 0;
+  animation: fadeIn 1s ease-in forwards;
+  animation-delay: 0.6s;
+}
+
+.titulo span:first-child {
+  color: #f56a4e; /* Parki */
+}
+
+.titulo .care {
+  color: #3a9c3c; /* Care */
+}
+/* Caixa de boas-vindas */
+.caixa-boasvindas {
+  background-color: #ffe6a7;
+  width: 100%;
+  padding: 100px 0; /* reduzido de 130px para 100px */
+  text-align: center;
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
+  margin-top: 100px; /* reduzido de 130px para 100px */
+  opacity: 0;
+  animation: slideUp 1.2s ease forwards;
+  animation-delay: 0.8s;
+}
+
+.caixa-boasvindas h2 {
+  color: #f56a4e;
+  font-size: 25px;
+  margin-bottom: 8px;
+}
+
+.caixa-boasvindas p {
+  color: #d94f3b;
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+/* Botões */
+.botoes {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+}
+
+button {
+  background-color: #fff9d8;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 730;
+  color: #2e7d32;
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+.cadastro {
+  color: #2e7d32;
+  background-color: #e7ffd7;
+}
+
+/* 🔸 Animações */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ParkiCare</title>
+  <link rel="stylesheet" href="telaininicial.css" />
+</head>
+
+<body>
+  <div class="container">
+
+    <!-- Cabeçalho -->
+    <div class="logo">
+      <img src="logoParkicare.png.png" alt="logo">
+      <div>
+        <h1>ParkiCare</h1>
+        <p class="subtitle">Pequenos passos, grandes cuidados.</p>
+      </div>
+    </div>
+
+    <!-- Botão de Emergência -->
+    <button class="btn-emergency" onclick="irPara('emergencia.html')">
+      Botão de Emergência
+    </button>
+
+    <!-- Medicamentos -->
+    <h2 class="section-title">Medicamentos agendados:</h2>
+
+    <div id="lista-medicamentos">
+      <!-- Medicamentos serão inseridos aqui via Javascript -->
+    </div>
+
+    <!-- Modal Detalhes -->
+    <div id="details-modal" class="modal-overlay hidden">
+      <div class="modal-content">
+        <h2 id="detail-nome">Nome do Medicamento</h2>
+        <p id="detail-info">Detalhes...</p>
+        <div class="modal-actions">
+          <button id="btn-toggle-status" class="btn-success" onclick="alternarStatusDetalhe()">Marcar como
+            tomado</button>
+          <button class="btn-danger" onclick="excluirMedicamento()">Excluir medicação</button>
+        </div>
+        <button class="btn-exit" onclick="fecharDetalhes()">Sair</button>
+      </div>
+    </div>
+
+    <!-- Modal Emergência -->
+    <div id="emergency-modal" class="modal-overlay hidden">
+      <div class="modal-content emergency-content">
+        <div class="emergency-icon-container">
+          <img src="sirene.png" alt="Sirene" class="siren-icon">
+        </div>
+        <h2>Confirmar emergência?</h2>
+
+        <p class="emergency-text">
+          Uma notificação será enviada a seu(s)<br>contato(s) de emergência
+        </p>
+
+        <p class="contacts-label-centered">Contatos que receberão a notificação:</p>
+
+        <div class="contact-list-clean">
+          <div class="contact-item">
+            <strong>Mãe</strong>
+            <small>Parentesco; (11) 99999-9999</small>
+          </div>
+
+          <div class="contact-item">
+            <strong>Pai</strong>
+            <small>Parentesco; (11) 98888-8888</small>
+          </div>
+        </div>
+
+        <button id="btn-cancel-emergency" class="btn-cancel-grey" onclick="cancelarEmergencia()">(10s) cancelar</button>
+      </div>
+    </div>
+
+    <!-- Menu inferior -->
+    <div class="menu">
+      <button class="menu-btn" onclick="irPara('teste.tremores.html')">
+        <img src="mao.png" alt="logo">
+        <span>Teste de Tremores</span>
+      </button>
+
+      <button class="menu-btn" onclick="irPara('telamedicamento.html')">
+        <img src="remedio.png" alt="logo">
+        <span>Medicamentos</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal de Notificação -->
+  <div id="notification-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-icon">
+        <img src="sino.png" alt="Sino de notificação">
+      </div>
+      <h2>Está na hora do<br>seu remédio.</h2>
+      <p>Se já tomou, pode ignorar esta mensagem</p>
+      <button onclick="confirmarTomada()">ok</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script src="telainicial.js"></script>
+</body>
+
+</html>

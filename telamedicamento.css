@@ -1,0 +1,198 @@
+:root {
+    --primary-color: #f2f1f7; 
+    --background-color: #ffffff;
+    --card-background:  RGB(169, 159, 228);
+    --text-color: #ffffff;
+    --label-color: #ffffff;
+    --placeholder-color: #1e2149;
+    --button-export-color: #eeeeee;
+    --header-text-color: #333333; /* Cor escura para o texto do cabeçalho. Pode mudar para #ffffff se o fundo for escuro. */
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--background-color);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+}
+
+.container {
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.header {
+    /* MUDANÇAS AQUI: */
+    background-color: transparent; /* Remove o fundo do cabeçalho */
+    color: var(--header-text-color); /* Garante que o texto tenha uma cor definida */
+    padding: 15px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    position: relative;
+    box-shadow: none; /* Remove a sombra que destacava o retângulo */
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    width: 40px;
+    height: 50px;
+    margin-right: 15px;
+}
+
+.logo img {
+    width: 100%;
+    height: 100%;
+}
+
+.title-container h1 {
+    margin: 0;
+    font-size: 1.5em;
+    font-weight: 700;
+    color: var(--header-text-color); /* Aplica a cor de texto do cabeçalho */
+}
+
+.title-container p {
+    margin: 0;
+    font-size: 0.8em;
+    font-weight: 400;
+    color: var(--header-text-color); /* Aplica a cor de texto do cabeçalho */
+}
+
+.back-button {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(38, 114, 101, 0.637); /* Ajustei o fundo do botão para contrastar */
+    border-radius: 50%;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.export-button {
+    /* botao exportar */
+    width: 100%;
+    padding: 17px;
+    background-color: var(--button-export-color);
+    color: rgb(18, 17, 36);
+    border: none;
+    border-radius: 25px;
+    font-size: 1em;
+    font-weight: 700;
+    cursor: pointer;
+    margin-bottom: 20px;
+    box-shadow: 0 7px 9px rgba(0, 0, 0, 0.514);
+    transition: background-color 0.3s;
+}
+
+.export-button:hover {
+    background-color: #8cbdfd;
+} 
+
+.card {
+    background-color: var(--card-background);
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.card h2 {
+    color: var(--text-color);
+    font-size: 1.2em;
+    font-weight: 700;
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    text-align: left;
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.9em;
+    color: var(--label-color);
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+input, select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid rgb(0, 0, 0);
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 1em;
+    color: #22254b
+}
+
+input::placeholder {
+    color: var(--placeholder-color);
+}
+
+.form-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.half-width {
+    flex: 1;
+}
+
+.input-with-select {
+    display: flex;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.input-with-select input {
+    border: none;
+    flex: 1;
+    padding: 10px;
+    border: 1.6px solid rgb(0, 0, 0);
+}
+
+.input-with-select select {
+    width: auto;
+    border-left: 1px solid #000000;
+    border-radius: 0;
+    padding: 10px;
+    background-color: #ffffff;
+}
+
+.submit-button {
+    width: 100%;
+    padding: 15px;
+    background-color: var(--button-export-color); /* Alterei para usar a cor de botão do seu tema */
+    color: rgb(13, 2, 46);
+    border: none;
+    border-radius: 25px;
+    font-size: 1em;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: background-color 0.3s;
+}
+
+.submit-button:hover {
+    background-color: #8cbdfd;
+}

@@ -1,0 +1,172 @@
+/* Importação de fontes (opcional, mas para um visual mais limpo) */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+
+:root {
+    /* Definição de cores base */
+    --color-green-dark: #4CAF50; /* Verde escuro para o botão */
+    --color-green-light: #fcfeea; /* Verde claro para o fundo do card (se necessário) */
+    --color-text-dark: #49943a;
+    --color-text-highlight: #E55C3A; /* Laranja/Vermelho para "ParkiCare" no texto */
+    --color-orange-bullet: #E55C3A; /* Laranja para os bullets e o nome "ParkiCare" principal */
+    /* --color-background-wave: #63AE63; Este não será mais usado diretamente para a onda */
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f4f4f4; /* Fundo geral da página */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.card {
+    width: 300px; /* Largura do cartão, similar a um app mobile */
+    min-height: 500px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    position: relative; /* Para posicionar a onda e o botão */
+    overflow: hidden; /* Garante que a onda e o texto fiquem dentro do card */
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- Cabeçalho e Ícone --- */
+.header {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+}
+
+/* Espaço para a imagem do ícone da tulipa */
+.tulip-icon {
+    width: 40px; /* Ajuste conforme o tamanho da sua imagem */
+    height: 40px; /* Ajuste conforme o tamanho da sua imagem */
+    background-image: url('logoParkicare.png.png'); /* **ANEXE AQUI O LINK DA IMAGEM DA TULIPA** */
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: block; /* Para garantir que o width/height funcionem */
+}
+
+
+/* --- Logo --- */
+.logo-parkicare {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--color-orange-bullet);
+    margin: 0 0 20px 0;
+    line-height: 1.2;
+}
+.logo-parkicare::before {
+    /* Para mudar a cor da parte "ParkiCare" (simulando a imagem) */
+    content: "Parki";
+    color: #E55C3A; /* Vermelho/Laranja da imagem */
+}
+.logo-parkicare {
+    color: #4CAF50; /* Verde da imagem */
+}
+
+/* --- Descrição --- */
+.description {
+    font-size: 16px;
+    color: var(--color-text-dark);
+    line-height: 1.5;
+    margin-bottom: 25px;
+}
+
+.parkicare-highlight {
+    color: var(--color-text-highlight);
+    font-weight: 700;
+    /* text-decoration: underline; */ /* Removido para ficar mais fiel à imagem original */
+}
+
+/* --- Lista de Funcionalidades --- */
+.features-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 40px 0;
+    flex-grow: 1; /* Para empurrar o botão para baixo */
+}
+
+.features-list li {
+    font-size: 17px;
+    color: #cb8926; /* Cor do texto das funcionalidades, mais neutro */
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center; /* Alinha o texto e o ícone verticalmente */
+    font-weight: 500;
+}
+
+/* Espaço para a imagem do bullet/estrela */
+.bullet {
+    width: 18px; /* Ajuste conforme o tamanho da sua imagem */
+    height: 18px; /* Ajuste conforme o tamanho da sua imagem */
+    background-image: url('brilhar.png'); /* **ANEXE AQUI O LINK DA IMAGEM DA ESTRELINHA/BULLET** */
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: inline-block;
+    margin-right: 10px;
+    flex-shrink: 0; /* Impede que o bullet encolha */
+}
+
+
+/* --- Botão Próximo --- */
+/* --- Botão Próximo --- */
+.button-container {
+    position: absolute; /* Posição absoluta dentro do .card */
+    bottom: 170px; /* Ajustado para subir mais o botão */
+    right: 30px; /* Afastado da direita */
+    z-index: 10; /* Garante que o botão fique acima da onda */
+}
+
+.next-button {
+    background-color: #63AE63; /* Cor do botão, combinando com a onda */
+    color: #fff;
+    text-decoration: none;
+    padding: 12px 20px;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    transition: background-color 0.3s;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+.next-button:hover {
+    background-color: #5AA05A; /* Um pouco mais escuro ao passar o mouse */
+}
+
+
+.arrow-icon {
+    font-size: 20px;
+    margin-left: 8px;
+    line-height: 1;
+}
+
+/* --- Onda de Fundo Inferior como Imagem PNG --- */
+.bottom-wave {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 180px; /* Ajuste a altura conforme a sua imagem PNG da onda */
+    background-image: url('formaverde.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: -20px bottom; /* Move a imagem 50px para a esquerda */
+    z-index: 5;
+    border-radius: 0 0 10px 10px;
+}
+
+
+/* Ajusta o padding do card para que o conteúdo não seja escondido pela onda */
+.card {
+    padding-bottom: 100px; /* Garante espaço para a onda e o botão */
+}  

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - ParkiCare</title>
+    <link rel="stylesheet" href="telacadastro.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="form-box">
+            <h1>Bem-vindo de volta!</h1>
+            <p>Entre na sua conta para continuar.</p>
+
+            <form id="loginForm" novalidate>
+
+                <div class="input-group">
+                    <input type="email" id="email" name="email" placeholder="Email" required autocomplete="email">
+                    <p class="error-text" id="email-error" aria-live="polite"></p>
+                </div>
+
+                <div class="password-field input-group">
+                    <input type="password" id="senha" name="senha" placeholder="Senha" required
+                        autocomplete="current-password">
+                    <span id="toggleSenha" class="eye"></span>
+                    <p class="error-text" id="senha-error" aria-live="polite"></p>
+                </div>
+
+                <button type="submit">Entrar</button>
+
+                <p style="text-align: center; margin-top: 15px; font-size: 14px;">
+                    Não tem uma conta? <a href="telacadastro.html"
+                        style="color: #6C63FF; text-decoration: none; font-weight: bold;">Cadastre-se</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Supabase & Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js"></script>
+    <script src="telalogin.js"></script>
+</body>
+
+</html>

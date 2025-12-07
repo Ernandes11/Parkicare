@@ -1,0 +1,130 @@
+/* telacadastro.css */
+
+/* Reset básico para todos os elementos */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+/* Corpo da página */
+body {
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+/* Contêiner principal */
+.container {
+  width: 90vw;
+  max-width: 380px;
+  background: #fffff2;
+  border-radius: 20px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  padding: 30px; 
+  aspect-ratio: 9 / 16;
+  overflow-y: auto;
+}
+
+.form-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* ALINHA O CONTEÚDO NO TOPO */
+  height: 100%;
+  text-align: center;
+}
+
+h1 {
+  color: #2b7a0b;
+  font-size: 1.5rem;
+  margin-top: 15px; /* Adiciona uma margem acima do título */
+  margin-bottom: 5px; 
+}
+
+p {
+  color: #3c763d;
+  font-size: 0.9rem;
+  margin-bottom: 30px; /* Aumenta o espaço após o parágrafo de introdução */
+}
+
+/* Estilo para o grupo de input */
+.input-group {
+  position: relative;
+  margin-bottom: 12px; /* Padroniza o espaçamento entre os campos */
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  outline: none;
+  font-size: 0.9rem;
+  height: 44px;
+}
+
+.error-text {
+  color: #e74c4c;
+  font-size: 0.8rem;
+  margin-top: 5px;
+  text-align: left;
+  display: block;
+}
+
+.password-field {
+  position: relative;
+}
+
+.password-field .eye {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 22px; /* A largura do ícone único */
+  height: 22px; /* A altura do ícone único */
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+  
+  /* Configura a imagem de sprite como fundo */
+  background-image: url('olho.png');
+  background-size: 44px 22px; /* O tamanho total da imagem de sprite */
+  background-repeat: no-repeat;
+  
+  /* Define a posição inicial para o olho fechado */
+  background-position: 0 0;
+}
+
+.password-field .eye:hover {
+  opacity: 1;
+}
+
+/* Nova classe para o estado do olho aberto */
+.password-field .eye.active {
+  /* Move a posição do fundo para mostrar o ícone do olho aberto */
+  background-position: -22px 0; /* Move a imagem 22px para a esquerda */
+}
+
+button {
+  width: 100%;
+  background-color: #ff5c5c;
+  border: none;
+  color: #fff;
+  padding: 12px;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+  margin-top: auto; /* Empurra o botão para a parte inferior */
+}
+
+button:hover {
+  background-color: #ff4040;
+}
+button:active {
+  transform: scale(0.98);
+}    
