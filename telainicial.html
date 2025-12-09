@@ -92,13 +92,14 @@
 
   <!-- Modal de Notificação -->
   <div id="notification-modal" class="modal-overlay hidden">
-    <div class="modal-content">
-      <div class="modal-icon">
+    <div class="modal-content notification-content">
+      <div class="notification-bell">
         <img src="sino.png" alt="Sino de notificação">
       </div>
-      <h2>Está na hora do<br>seu remédio.</h2>
-      <p>Se já tomou, pode ignorar esta mensagem</p>
-      <button onclick="confirmarTomada()">ok</button>
+      <h2 class="notification-title">Está na hora do<br>seu remédio.</h2>
+      <p class="notification-text">Se o tempo da contagem terminar e você não tocar em "Ok", o remédio será registrado
+        como "atrasado".</p>
+      <button class="notification-button" onclick="confirmarTomada()">Ok (10s)</button>
     </div>
   </div>
 

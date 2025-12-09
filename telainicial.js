@@ -257,11 +257,29 @@ async function checkNotifications() {
 
 function showModal() {
     const modal = document.getElementById('notification-modal');
+    const button = document.querySelector('.notification-button');
+
     if (modal) {
         playSound();
         modal.classList.remove('hidden');
+
+        let countdown = 10;
+        if (button) {
+            button.textContent = `Ok (${countdown}s)`;
+        }
+
         if (notificationTimeout) clearTimeout(notificationTimeout);
+
+        // Update countdown every second
+        const countdownInterval = setInterval(() => {
+            countdown--;
+            if (button && countdown > 0) {
+                button.textContent = `Ok (${countdown}s)`;
+            }
+        }, 1000);
+
         notificationTimeout = setTimeout(async () => {
+            clearInterval(countdownInterval);
             if (currentMedId) {
                 // Fetch name for log
                 const { data: med } = await window.supabaseClient
