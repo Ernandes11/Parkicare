@@ -1,11 +1,58 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
-  <title>Título da Página</title>
+  <title>Motricidade Fina</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="teste.tremores.css">
+
+  <!-- extensao do jsPDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
+
 <body>
-  <h1>Olá Mundo!</h1>
-  <p>Este é um parágrafo de exemplo.</p>
+  <div class="container">
+
+    <div class="topo">
+
+
+      <a href="telainicial.html" class="btn_voltar">
+        <img src="icone_voltar_novo.png" alt="" class="img">
+      </a>
+    </div>
+
+    <header>
+      <h1>Teste sua motricidade fina</h1>
+      <p>
+        Faça um desenho em forma de espiral para testar seus
+        tremores, capriche e mostre sua precisão!
+      </p>
+    </header>
+
+    <canvas id="desenho" width="325" height="325"></canvas>
+
+    <div class="botoes">
+      <button class="btn refazer">
+        <img src="icone_refazer_novo.png" class="icon">
+        Refazer
+      </button>
+
+      <button class="btn exportar">
+
+        Exportar desenho
+      </button>
+    </div>
+
+  </div>
+
+  <script src="teste.tremores.js"></script>
 </body>
+
+
 </html>
