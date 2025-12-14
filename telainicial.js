@@ -8,21 +8,19 @@ let currentDetailId = null;
 let currentUser = null;
 
 // Sound
-const beepUrl = "data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU";
-
 function playSound() {
     try {
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        if (AudioContext) {
-            const ctx = new AudioContext();
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.frequency.setValueAtTime(440, ctx.currentTime);
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            osc.start();
-            gain.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + 0.5);
-            osc.stop(ctx.currentTime + 0.5);
+        // Get selected sound from settings, default to 'padrao'
+        const savedSound = localStorage.getItem('parkicare_alarmSound');
+        const soundName = savedSound ? JSON.parse(savedSound) : 'padrao';
+
+        const audio = new Audio(`${soundName}.mp3`);
+        audio.play().catch(e => console.error("Error playing alarm sound:", e));
+
+        // Vibration fallback (if supported and enabled)
+        const alertType = JSON.parse(localStorage.getItem('parkicare_alertType') || '"sound-vibration"');
+        if (alertType !== 'sound-only' && navigator.vibrate) {
+            navigator.vibrate([200, 100, 200]);
         }
     } catch (e) {
         console.error("Audio play failed", e);
@@ -367,7 +365,8 @@ function abrirEmergencia() {
     if (!modal) return;
 
     // Reset state
-    emergencySeconds = 10;
+    const savedTime = localStorage.getItem('parkicare_emergencyTimer');
+    emergencySeconds = savedTime ? parseInt(JSON.parse(savedTime)) : 10;
     const btn = document.getElementById('btn-cancel-emergency');
     btn.innerText = `(${emergencySeconds}s) cancelar`;
 
@@ -435,7 +434,18 @@ function enviarEmergencia() {
     }
 
     const meta = currentUser.user_metadata;
-    const message = "SOCORRO! Preciso de ajuda urgente!";
+
+    // Get custom message or default
+    const savedMsg = localStorage.getItem('parkicare_emergencyMessage');
+    let message = "SOCORRO! Preciso de ajuda urgente!";
+    if (savedMsg) {
+        try {
+            const parsed = JSON.parse(savedMsg);
+            if (parsed && parsed.trim() !== "") message = parsed;
+        } catch (e) {
+            console.error("Error parsing saved message", e);
+        }
+    }
     const encodedMsg = encodeURIComponent(message);
 
     // Prioritize Contact 1

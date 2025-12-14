@@ -79,7 +79,7 @@ body {
 h1 {
   font-size: 24px;
   margin: 0;
-  color: #292077;
+  color: #7d0f99;
 }
 
 p.subtitle {
@@ -184,7 +184,7 @@ p.subtitle {
 .menu-btn span {
   display: block;
   margin-top: 5px;
-  color: #34079c;
+  color: #f1731f;
   font-size: 18px;
   font-weight: 5600;
 }
@@ -434,4 +434,40 @@ p.subtitle {
   color: #333 !important;
   padding: 10px 40px !important;
   margin-top: 5px;
+}
+
+/* Cabeçalho Topo (Novo) */
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+/* Ajuste na logo para caber no flex */
+.logo {
+  margin-bottom: 0;
+  /* Remove a margem antiga */
+}
+
+/* Botão de Configurações */
+.btn-config {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  transition: transform 0.2s;
+  display: flex;
+  /* Remove espaços extras */
+}
+
+.btn-config img {
+  width: 40px;
+  /* Tamanho do ícone */
+  height: auto;
+}
+
+.btn-config:hover {
+  transform: rotate(30deg);
+  /* Efeito ao passar o mouse */
 }
