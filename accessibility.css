@@ -1,0 +1,96 @@
+/* --- Global Accessibility Styles --- */
+
+:root {
+    /* Standard Palette */
+    --color-green-dark: #A3B565;
+    --color-green-light: #e7e6eb;
+    --color-text-dark: #504E76;
+    --color-text-highlight: #504E76;
+    --color-orange-bullet: #504E76;
+    --color-background: #e7e6eb;
+}
+
+/* High Contrast Mode */
+body.mode-high-contrast {
+    --color-green-dark: #FFFFFF;
+    --color-green-light: #000000;
+    --color-text-dark: #FFFF00;
+    --color-text-highlight: #FFFF00;
+    --color-orange-bullet: #FFFF00;
+    --color-background: #1a1a1a;
+    background-color: #000 !important;
+    color: #FFF !important;
+}
+
+body.mode-high-contrast h1,
+body.mode-high-contrast h2,
+body.mode-high-contrast h3,
+body.mode-high-contrast p,
+body.mode-high-contrast label,
+body.mode-high-contrast span,
+body.mode-high-contrast strong {
+    color: #FFFF00 !important;
+}
+
+body.mode-high-contrast button {
+    background-color: #000 !important;
+    border: 2px solid #FFFF00 !important;
+    color: #FFFF00 !important;
+}
+
+/* Font Sizing */
+body.font-small {
+    font-size: 12px !important;
+}
+
+body.font-small h1 {
+    font-size: 1.2rem !important;
+}
+
+body.font-small h2 {
+    font-size: 1rem !important;
+}
+
+body.font-small p,
+body.font-small button,
+body.font-small label,
+body.font-small input,
+body.font-small textarea,
+body.font-small select {
+    font-size: 0.8rem !important;
+}
+
+body.font-large {
+    font-size: 20px !important;
+}
+
+body.font-large h1 {
+    font-size: 2rem !important;
+}
+
+body.font-large h2 {
+    font-size: 1.5rem !important;
+}
+
+body.font-large p,
+body.font-large button,
+body.font-large label,
+body.font-large input,
+body.font-large textarea,
+body.font-large select {
+    font-size: 1.2rem !important;
+}
+
+/* Big Buttons */
+body.mode-big-buttons button,
+body.mode-big-buttons .menu-btn,
+body.mode-big-buttons .btn-emergency,
+body.mode-big-buttons input[type="radio"],
+body.mode-big-buttons input[type="checkbox"],
+body.mode-big-buttons select,
+body.mode-big-buttons .switch {
+    transform: scale(1.2) !important;
+    margin: 10px;
+    transform-origin: left center;
+    /* Keeps it aligned */
+}

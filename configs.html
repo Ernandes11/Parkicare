@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurações - ParkiCare</title>
+    <link rel="stylesheet" href="configs.css">
+    <link rel="stylesheet" href="accessibility.css">
+</head>
+
+<body>
+    <main class="settings-container">
+        <div class="settings-header">
+            <button class="btn-back-arrow" onclick="window.location.href='telainicial.html'">
+                <img src="icone_voltar_novo.png" alt="Voltar">
+            </button>
+            <h1>Configurações</h1>
+        </div>
+
+        <!-- 1. Acessibilidade Visual e Motora -->
+        <section class="setting-group">
+            <h2>Acessibilidade visual e motora</h2>
+
+            <!-- Tamanho da fonte -->
+            <h3>Tamanho da fonte</h3>
+            <p>Escolha o tamanho do texto da interface.</p>
+            <div class="font-size-options">
+                <label><input type="radio" name="font-size" value="small"> Pequeno</label>
+                <label><input type="radio" name="font-size" value="medium" checked> Médio</label>
+                <label><input type="radio" name="font-size" value="large"> Grande</label>
+            </div>
+
+            <!-- Modo botões grandes -->
+            <h3>Tamanho dos botões </h3>
+            <p>Aumenta o tamanho dos botões para facilitar o toque.</p>
+            <label class="switch">
+                <input type="checkbox" id="big-buttons-toggle">
+                <span class="slider round"></span>
+            </label>
+
+            <!-- Alto contraste -->
+            <h3>Alto contraste</h3>
+            <p>Altera as cores para facilitar a leitura (preto/amarelo ou preto/branco).</p>
+            <label class="switch">
+                <input type="checkbox" id="high-contrast-toggle">
+                <span class="slider round"></span>
+            </label>
+        </section>
+
+        <!-- 2. Ajustes de Alertas e Som -->
+        <section class="setting-group">
+            <h2>Alertas e som</h2>
+
+            <!-- Volume e vibração -->
+            <h3>Tipo de alerta</h3>
+            <p>Escolha como o alarme será disparado.</p>
+            <div class="alert-options">
+                <label><input type="radio" name="alert-type" value="sound-vibration" checked> Som + vibração</label>
+                <label><input type="radio" name="alert-type" value="sound-only"> Apenas som</label>
+                <label><input type="radio" name="alert-type" value="vibration-only"> Apenas vibração</label>
+            </div>
+
+            <!-- Som do alarme -->
+            <h3>Som do alarme</h3>
+            <p>Selecione o tipo de som.</p>
+            <select id="alarm-sound-select">
+                <option value="suave">Som suave</option>
+                <option value="padrao" selected>Som padrão</option>
+                <option value="estridente">Som estridente</option>
+            </select>
+        </section>
+
+        <!-- 3. Ajustes de Segurança (Emergência) -->
+        <section class="setting-group">
+            <h2>Segurança e emergência</h2>
+
+            <!-- Tempo de contagem regressiva -->
+            <h3>Tempo para cancelar emergência</h3>
+            <p>Defina quanto tempo terá para cancelar um alarme antes de avisar aos seus contatos.</p>
+            <select id="emergency-timer-select">
+                <option value="5">5 segundos</option>
+                <option value="10" selected>10 segundos</option>
+                <option value="30">30 segundos</option>
+            </select>
+
+            <!-- Mensagem personalizada -->
+            <h3>Mensagem de emergência</h3>
+            <p>Texto que será enviado aos contatos (WhatsApp).</p>
+            <textarea id="emergency-message" rows="3"
+                placeholder="Ex: Estou tendo um congelamento (freezing), venha me ajudar."></textarea>
+        </section>
+    </main>
+    <script src="configs.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,200 @@
+/* Importa a mesma fonte */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+
+/* Fundo geral e centralização do “card” */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--color-background);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+/* Card principal de configurações */
+.settings-container {
+    width: 320px;
+    max-height: 90vh;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 20px 18px;
+    position: relative;
+    overflow-y: auto;
+}
+
+/* Título principal */
+.settings-container h1 {
+    font-size: 22px;
+    margin: 0 0 16px 0;
+    color: var(--color-green-dark);
+}
+
+/* Cabeçalho de Configurações (Novo) */
+.settings-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.settings-header h1 {
+    margin: 0;
+}
+
+/* Botão Seta de Voltar */
+.btn-back-arrow {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    transition: transform 0.2s;
+}
+
+.btn-back-arrow img {
+    width: 30px;
+    height: auto;
+}
+
+.btn-back-arrow:hover {
+    transform: translateX(-3px);
+}
+
+
+/* Seções */
+.setting-group {
+    margin-bottom: 20px;
+    padding: 12px 10px;
+    border-radius: 8px;
+    background-color: var(--color-green-light);
+}
+
+.setting-group h2 {
+    font-size: 18px;
+    margin: 0 0 8px 0;
+    color: var(--color-text-dark);
+}
+
+.setting-group h3 {
+    font-size: 15px;
+    margin: 10px 0 4px 0;
+    color: var(--color-orange-bullet);
+}
+
+.setting-group p {
+    margin: 0 0 6px 0;
+    font-size: 13px;
+    color: #555;
+}
+
+/* Inputs em geral */
+.setting-group label {
+    display: block;
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 6px;
+}
+
+.setting-group input[type="text"],
+.setting-group input[type="tel"],
+.setting-group select,
+.setting-group textarea {
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+/* Radio groups (fonte, tipo de alerta etc.) */
+.font-size-options,
+.alert-options {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.font-size-options label,
+.alert-options label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+}
+
+/* Textarea */
+.setting-group textarea {
+    resize: vertical;
+    min-height: 70px;
+}
+
+/* Botão voltar / salvar */
+.btn-back {
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px 0;
+    background-color: var(--color-green-dark);
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+.btn-back:hover {
+    filter: brightness(0.9);
+}
+
+/* Toggle switch */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 46px;
+    height: 26px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background-color: #ccc;
+    transition: .3s;
+    border-radius: 26px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .3s;
+    border-radius: 50%;
+}
+
+.switch input:checked+.slider {
+    background-color: var(--color-green-dark);
+}
+
+.switch input:checked+.slider:before {
+    transform: translateX(20px);
+}
+
+.setting-group .switch {
+    margin-top: 4px;
+}
