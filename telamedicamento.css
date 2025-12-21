@@ -1,12 +1,22 @@
 :root {
-    --primary-color: #f2f1f7; 
-    --background-color: #ffffff;
-    --card-background:  RGB(169, 159, 228);
-    --text-color: #ffffff;
-    --label-color: #ffffff;
-    --placeholder-color: #1e2149;
-    --button-export-color: #eeeeee;
-    --header-text-color: #333333; /* Cor escura para o texto do cabeçalho. Pode mudar para #ffffff se o fundo for escuro. */
+    --background-color: #FDF8E2;
+    /* Light Beige */
+    --card-background: #FFFFFF;
+    /* Changed to White for clean look */
+    --text-color: #504E76;
+    /* Dark Purple */
+    --label-color: #504E76;
+    /* Dark Purple */
+    --placeholder-color: #504E76;
+    /* Dark Purple with opacity conceptually, or just solid */
+    --button-primary-color: #F1642E;
+    /* Saturated Orange */
+    --button-secondary-color: #A3B565;
+    /* Calm Green */
+    --header-text-color: #504E76;
+    /* Dark Purple */
+    --input-border-color: #C4C3E3;
+    /* Light Purple for subtle border */
 }
 
 body {
@@ -28,9 +38,8 @@ body {
 }
 
 .header {
-    /* MUDANÇAS AQUI: */
-    background-color: transparent; /* Remove o fundo do cabeçalho */
-    color: var(--header-text-color); /* Garante que o texto tenha uma cor definida */
+    background-color: transparent;
+    color: var(--header-text-color);
     padding: 15px;
     border-radius: 10px;
     display: flex;
@@ -38,7 +47,7 @@ body {
     align-items: center;
     margin-bottom: 20px;
     position: relative;
-    box-shadow: none; /* Remove a sombra que destacava o retângulo */
+    box-shadow: none;
 }
 
 .header-content {
@@ -61,14 +70,14 @@ body {
     margin: 0;
     font-size: 1.5em;
     font-weight: 700;
-    color: var(--header-text-color); /* Aplica a cor de texto do cabeçalho */
+    color: var(--header-text-color);
 }
 
 .title-container p {
     margin: 0;
     font-size: 0.8em;
     font-weight: 400;
-    color: var(--header-text-color); /* Aplica a cor de texto do cabeçalho */
+    color: var(--header-text-color);
 }
 
 .back-button {
@@ -77,37 +86,39 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: rgba(38, 114, 101, 0.637); /* Ajustei o fundo do botão para contrastar */
+    background-color: transparent;
+    /* Transparent background for the new icon */
     border-radius: 50%;
     padding: 5px;
     cursor: pointer;
 }
 
 .export-button {
-    /* botao exportar */
     width: 100%;
     padding: 17px;
-    background-color: var(--button-export-color);
-    color: rgb(18, 17, 36);
+    background-color: var(--button-secondary-color);
+    /* Green */
+    color: #ffffff;
+    /* White text for contrast on green */
     border: none;
     border-radius: 25px;
     font-size: 1em;
     font-weight: 700;
     cursor: pointer;
     margin-bottom: 20px;
-    box-shadow: 0 7px 9px rgba(0, 0, 0, 0.514);
-    transition: background-color 0.3s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: opacity 0.3s;
 }
 
 .export-button:hover {
-    background-color: #8cbdfd;
-} 
+    opacity: 0.9;
+}
 
 .card {
     background-color: var(--card-background);
     padding: 25px;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
 }
 
@@ -128,22 +139,27 @@ body {
     display: block;
     font-size: 0.9em;
     color: var(--label-color);
-    font-weight: 500;
+    font-weight: 700;
+    /* Bold labels for readability on color */
     margin-bottom: 5px;
 }
 
-input, select {
+input,
+select {
     width: 100%;
     padding: 10px;
-    border: 1px solid rgb(0, 0, 0);
+    border: 1px solid var(--input-border-color);
     border-radius: 5px;
     box-sizing: border-box;
     font-size: 1em;
-    color: #22254b
+    color: var(--text-color);
+    background-color: #ffffff;
+    /* Keep inputs white for usability */
 }
 
 input::placeholder {
     color: var(--placeholder-color);
+    opacity: 0.7;
 }
 
 .form-row {
@@ -158,41 +174,44 @@ input::placeholder {
 
 .input-with-select {
     display: flex;
-    border: 1px solid #ddd;
+    border: 1px solid var(--input-border-color);
     border-radius: 5px;
     overflow: hidden;
+    background-color: #fff;
 }
 
 .input-with-select input {
     border: none;
     flex: 1;
     padding: 10px;
-    border: 1.6px solid rgb(0, 0, 0);
 }
 
 .input-with-select select {
     width: auto;
-    border-left: 1px solid #000000;
+    border: none;
+    border-left: 1px solid var(--input-border-color);
     border-radius: 0;
     padding: 10px;
-    background-color: #ffffff;
+    background-color: transparent;
+    color: var(--text-color);
 }
 
 .submit-button {
     width: 100%;
     padding: 15px;
-    background-color: var(--button-export-color); /* Alterei para usar a cor de botão do seu tema */
-    color: rgb(13, 2, 46);
+    background-color: var(--button-primary-color);
+    /* Orange for main action */
+    color: #ffffff;
     border: none;
     border-radius: 25px;
     font-size: 1em;
     font-weight: 700;
     cursor: pointer;
     margin-top: 20px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    transition: background-color 0.3s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: opacity 0.3s;
 }
 
 .submit-button:hover {
-    background-color: #8cbdfd;
+    opacity: 0.9;
 }
