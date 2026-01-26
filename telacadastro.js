@@ -69,7 +69,7 @@ if (form) {
 
       if (data.session) {
         alert('Conta criada com sucesso! Você será redirecionado.');
-        window.location.href = 'telainicial.html';
+        window.location.href = 'telaproxima.html';
       } else if (data.user && !data.session) {
         alert('Conta criada! Por favor, verifique seu email para confirmar o cadastro antes de fazer login.');
         window.location.href = 'telalogin.html';
