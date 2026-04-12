@@ -5,8 +5,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Crie sua conta</title>
-  <link rel="stylesheet" href="telacadastro.css">
-  <link rel="stylesheet" href="accessibility.css">
+  <link rel="stylesheet" href="/static/css/telacadastro.css">
+  <link rel="stylesheet" href="/static/css/accessibility.css">
+  <script src="/static/js/utils.js"></script>
 </head>
 
 <body>
@@ -54,7 +55,7 @@
         <button type="submit">Vamos começar!</button>
 
         <p style="text-align: center; margin-top: 15px; font-size: 14px;">
-          Já tem uma conta? <a href="telalogin.html"
+          Já tem uma conta? <a href="/login"
             style="color: #6C63FF; text-decoration: none; font-weight: bold;">Entre aqui</a>
         </p>
       </form>
@@ -62,9 +63,8 @@
   </div>
 
   <!-- Supabase & Client -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase-client.js"></script>
-  <script src="telacadastro.js"></script>
+  
+  <script src="/static/js/telacadastro.js"></script>
 </body>
 
 </html>

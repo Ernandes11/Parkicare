@@ -5,8 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - ParkiCare</title>
-    <link rel="stylesheet" href="telacadastro.css?v=2">
-    <link rel="stylesheet" href="accessibility.css">
+    <link rel="stylesheet" href="/static/css/telacadastro.css?v=2">
+    <link rel="stylesheet" href="/static/css/accessibility.css">
+    <script src="/static/js/utils.js"></script>
 </head>
 
 <body>
@@ -31,7 +32,7 @@
                 <button type="submit">Entrar</button>
 
                 <p style="text-align: center; margin-top: 15px; font-size: 14px;">
-                    Não tem uma conta? <a href="telacadastro.html"
+                    Não tem uma conta? <a href="/cadastro"
                         style="color: #6C63FF; text-decoration: none; font-weight: bold;">Cadastre-se</a>
                 </p>
             </form>
@@ -39,9 +40,8 @@
     </div>
 
     <!-- Supabase & Client -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="supabase-client.js"></script>
-    <script src="telalogin.js"></script>
+    
+    <script src="/static/js/telalogin.js"></script>
 </body>
 
 </html>

@@ -5,8 +5,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ParkiCare</title>
-  <link rel="stylesheet" href="telaininicial.css" />
-  <link rel="stylesheet" href="accessibility.css" />
+  <link rel="stylesheet" href="/static/css/telaininicial.css" />
+  <link rel="stylesheet" href="/static/css/accessibility.css" />
+  <script src="/static/js/utils.js"></script>
 </head>
 
 <body>
@@ -15,20 +16,20 @@
     <!-- Cabeçalho -->
     <div class="header-top">
       <div class="logo">
-        <img src="logoParkicare.png" alt="logo">
+        <img src="/static/img/logoParkicare.png" alt="logo">
         <div>
           <h1>ParkiCare</h1>
           <p class="subtitle">Pequenos passos, grandes cuidados.</p>
         </div>
       </div>
 
-      <button class="btn-config" onclick="window.location.href='configs.html'">
-        <img src="icone_config.png" alt="Configurações">
+      <button class="btn-config" onclick="window.location.href='/configs'">
+        <img src="/static/img/icone_config.png" alt="Configurações">
       </button>
     </div>
 
     <!-- Botão de Emergência -->
-    <button class="btn-emergency" onclick="irPara('emergencia.html')">
+    <button class="btn-emergency" onclick="mostrarEmergencia()">
       Botão de Emergência
     </button>
 
@@ -57,7 +58,7 @@
     <div id="emergency-modal" class="modal-overlay hidden">
       <div class="modal-content emergency-content">
         <div class="emergency-icon-container">
-          <img src="sirene.png" alt="Sirene" class="siren-icon">
+          <img src="/static/img/sirene.png" alt="Sirene" class="siren-icon">
         </div>
         <h2>Confirmar emergência?</h2>
 
@@ -79,19 +80,22 @@
           </div>
         </div>
 
-        <button id="btn-cancel-emergency" class="btn-cancel-grey" onclick="cancelarEmergencia()">(10s) cancelar</button>
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+          <button class="btn-danger" onclick="confirmarEmergencia()" style="flex: 1; padding: 12px; border: none; border-radius: 8px; background-color: #FF6B6B; color: white; font-weight: bold; cursor: pointer;">ENVIAR ALERTA</button>
+          <button id="btn-cancel-emergency" class="btn-cancel-grey" onclick="cancelarEmergencia()" style="flex: 1; padding: 12px; border: none; border-radius: 8px; background-color: #999; color: white; font-weight: bold; cursor: pointer;">(10s) cancelar</button>
+        </div>
       </div>
     </div>
 
     <!-- Menu inferior -->
     <div class="menu">
-      <button class="menu-btn" onclick="irPara('teste.tremores.html')">
-        <img src="icone_tremores_novo.png" alt="logo">
+      <button class="menu-btn" onclick="irPara('/tremores')">
+        <img src="/static/img/icone_tremores_novo.png" alt="logo">
         <span>Teste de Tremores</span>
       </button>
 
-      <button class="menu-btn" onclick="irPara('telamedicamento.html')">
-        <img src="icone_medicamentos_novo.png" alt="logo">
+      <button class="menu-btn" onclick="irPara('/medicamentos')">
+        <img src="/static/img/icone_medicamentos_novo.png" alt="logo">
         <span>Medicamentos</span>
       </button>
     </div>
@@ -101,7 +105,7 @@
   <div id="notification-modal" class="modal-overlay hidden">
     <div class="modal-content notification-content">
       <div class="notification-bell">
-        <img src="sino.png" alt="Sino de notificação">
+        <img src="/static/img/sino.png" alt="Sino de notificação">
       </div>
       <h2 class="notification-title">Está na hora do<br>seu remédio.</h2>
       <p class="notification-text">Se o tempo da contagem terminar e você não tocar em "Ok", o remédio será registrado
@@ -110,9 +114,9 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase-client.js"></script>
-  <script src="telainicial.js"></script>
+  
+  <script src="/static/js/emergencia.js"></script>
+  <script src="/static/js/telainicial.js"></script>
 </body>
 
 </html>
