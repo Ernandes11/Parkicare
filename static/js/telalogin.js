@@ -37,19 +37,28 @@ if (form) {
             btn.disabled = true;
             btn.innerText = 'Entrando...';
 
-            const { data, error } = await window.supabaseClient.auth.signInWithPassword({
-                email: email,
-                password: senhaValor
+            const response = await fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, senha: senhaValor })
             });
 
-            if (error) throw error;
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.erro || 'Falha no login');
+            }
+
+            // Save Token and User ID
+            localStorage.setItem('parkicare_token', result.token);
+            localStorage.setItem('parkicare_user_id', result.usuario_id);
 
             // Redirect
             window.location.href = '/proxima';
 
         } catch (err) {
             console.error("Erro login:", err);
-            showError('senha', 'Erro: ' + (err.message || 'Email ou senha incorretos.'));
+            showError('senha', err.message || 'Email ou senha incorretos.');
         } finally {
             const btn = form.querySelector('button');
             if (btn) {

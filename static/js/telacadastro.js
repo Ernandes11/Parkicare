@@ -31,7 +31,8 @@ if (form) {
     const senhaValor = senha.value.trim();
     const confirmarSenha = document.getElementById('confirmar_senha').value.trim();
     const whatsapp = document.getElementById('whatsapp').value.trim();
-    const whatsapp2 = document.getElementById('whatsapp2').value.trim();
+    const whatsapp2Elem = document.getElementById('whatsapp2');
+    const whatsapp2 = whatsapp2Elem ? whatsapp2Elem.value.trim() : '';
 
     let hasError = false;
     const showError = (fieldId, message) => {
@@ -51,40 +52,38 @@ if (form) {
 
     if (hasError) return;
 
-    // Supabase Sign Up
+    // Flask Cadastro
     try {
       const btn = form.querySelector('button.btn-primary');
-      const originalText = btn.innerText;
       btn.disabled = true;
       btn.innerText = 'Criando conta...';
 
-      const { data, error } = await window.supabaseClient.auth.signUp({
-        email: email,
-        password: senhaValor,
-        options: {
-          data: {
-            full_name: nome,
-            whatsapp: whatsapp,
-            whatsapp2: whatsapp2
-          }
-        }
+      const response = await fetch('/api/cadastro', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nome,
+          email,
+          senha: senhaValor,
+          whatsapp,
+          whatsapp2,
+          nome_contato: '', // Default empty
+          nome_contato2: ''
+        })
       });
 
-      if (error) {
-        throw error;
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.erro || 'Falha ao criar conta');
       }
 
-      if (data.session) {
-        alert('Conta criada com sucesso! Você será redirecionado.');
-        window.location.href = '/proxima';
-      } else if (data.user && !data.session) {
-        alert('Conta criada! Por favor, verifique seu email para confirmar o cadastro antes de fazer login.');
-        window.location.href = '/login';
-      }
+      alert('Conta criada com sucesso! Você já pode fazer login.');
+      window.location.href = '/login';
 
     } catch (err) {
       console.error("Erro cadastro:", err);
-      showError('email', 'Erro ao criar conta: ' + (err.message || 'Tente novamente.'));
+      showError('email', err.message || 'Tente novamente.');
     } finally {
       const btn = form.querySelector('button.btn-primary');
       if (btn) {

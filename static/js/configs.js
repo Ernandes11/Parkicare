@@ -16,11 +16,19 @@ function fecharModalContato() {
 let currentUser = null;
 
 async function checkAuth() {
-    if (!window.supabaseClient) return;
-    const { data: { session } } = await window.supabaseClient.auth.getSession();
-    if (session) {
-        currentUser = session.user;
-        renderSavedContacts();
+    const token = localStorage.getItem('parkicare_token');
+    if (!token) return;
+
+    try {
+        const response = await fetch('/api/perfil', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (response.ok) {
+            currentUser = await response.json();
+            renderSavedContacts();
+        }
+    } catch (e) {
+        console.error("Error loading profile:", e);
     }
 }
 
@@ -28,21 +36,18 @@ function renderSavedContacts() {
     const listDiv = document.getElementById('lista-contatos-config');
     if (!listDiv || !currentUser) return;
 
-    const meta = currentUser.user_metadata || {};
-    listDiv.innerHTML = '';
-
-    if (meta.whatsapp) {
+    if (currentUser.whatsapp) {
         listDiv.innerHTML += `
             <div class="contact-pill">
-                <span><strong>${meta.nome_contato || 'Contato 1'}:</strong> ${meta.whatsapp}</span>
+                <span><strong>${currentUser.nome_contato || 'Contato 1'}:</strong> ${currentUser.whatsapp}</span>
                 <button class="remove-pill" onclick="removerContato(1)">×</button>
             </div>
         `;
     }
-    if (meta.whatsapp2) {
+    if (currentUser.whatsapp2) {
         listDiv.innerHTML += `
             <div class="contact-pill">
-                <span><strong>${meta.nome_contato2 || 'Contato 2'}:</strong> ${meta.whatsapp2}</span>
+                <span><strong>${currentUser.nome_contato2 || 'Contato 2'}:</strong> ${currentUser.whatsapp2}</span>
                 <button class="remove-pill" onclick="removerContato(2)">×</button>
             </div>
         `;
@@ -71,13 +76,12 @@ async function salvarContato() {
         return;
     }
 
-    const meta = currentUser.user_metadata || {};
     let updates = {};
 
     // Determine if we save as contact 1 or 2
-    if (!meta.whatsapp) {
+    if (!currentUser.whatsapp) {
         updates = { whatsapp: contato, nome_contato: nome };
-    } else if (!meta.whatsapp2) {
+    } else if (!currentUser.whatsapp2) {
         updates = { whatsapp2: contato, nome_contato2: nome };
     } else {
         alert("Limite de 2 contatos atingido. Remova um para adicionar outro.");
@@ -85,13 +89,19 @@ async function salvarContato() {
     }
 
     try {
-        const { data, error } = await window.supabaseClient.auth.updateUser({
-            data: updates
+        const token = localStorage.getItem('parkicare_token');
+        const response = await fetch('/api/perfil', {
+            method: 'PUT',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(updates)
         });
 
-        if (error) throw error;
+        if (!response.ok) throw new Error("Update failed");
         
-        currentUser = data.user; // Update local user state
+        currentUser = { ...currentUser, ...updates }; // Update local state
         alert("Contato salvo com sucesso!");
         document.getElementById('novo-nome').value = '';
         document.getElementById('novo-contato-tel').value = '';
@@ -108,17 +118,25 @@ async function removerContato(num) {
     
     let updates = {};
     if (num === 1) {
-        updates = { whatsapp: null, nome_contato: null };
+        updates = { whatsapp: '', nome_contato: '' };
     } else {
-        updates = { whatsapp2: null, nome_contato2: null };
+        updates = { whatsapp2: '', nome_contato2: '' };
     }
 
     try {
-        const { data, error } = await window.supabaseClient.auth.updateUser({
-            data: updates
+        const token = localStorage.getItem('parkicare_token');
+        const response = await fetch('/api/perfil', {
+            method: 'PUT',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(updates)
         });
-        if (error) throw error;
-        currentUser = data.user;
+
+        if (!response.ok) throw new Error("Remover failed");
+        
+        currentUser = { ...currentUser, ...updates };
         renderSavedContacts();
     } catch (err) {
         console.error("Erro ao remover:", err);

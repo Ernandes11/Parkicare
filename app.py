@@ -19,13 +19,18 @@ class Usuario(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     senha = db.Column(db.String(200), nullable=False)
     nome = db.Column(db.String(120), nullable=False)
-    whatsapp = db.Column(db.String(11))
-    whatsapp2 = db.Column(db.String(11))
+    whatsapp = db.Column(db.String(20))
+    whatsapp2 = db.Column(db.String(20))
+    nome_contato = db.Column(db.String(120))
+    nome_contato2 = db.Column(db.String(120))
 
 class Medicamento(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100))
     dosagem = db.Column(db.String(50))
+    horario = db.Column(db.String(10))
+    intervalo = db.Column(db.Integer, default=0)
+    unidade = db.Column(db.String(20), default='mg')
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'))
     tomado = db.Column(db.Boolean, default=False)
 
@@ -63,16 +68,35 @@ def tela_configs():
     return render_template('configs.html')
 
 @app.route('/primeira')
+@app.route('/telaprimeira.html')
+@app.route('/telaprimeira')
 def tela_primeira():
     return render_template('telaprimeira.html')
 
 @app.route('/proxima')
+@app.route('/telaproxima.html')
 def tela_proxima():
     return render_template('telaproxima.html')
 
 @app.route('/tremores')
+@app.route('/teste.tremores.html')
 def tela_tremores():
     return render_template('teste.tremores.html')
+
+@app.route('/login.html')
+@app.route('/telalogin.html')
+def redirect_login():
+    return tela_login()
+
+@app.route('/cadastro.html')
+@app.route('/telacadastro.html')
+def redirect_cadastro():
+    return tela_cadastro()
+
+@app.route('/telainicial.html')
+@app.route('/inicial.html')
+def redirect_inicial():
+    return tela_inicial()
 
 # ========== ROTAS DE API ==========
 
@@ -102,7 +126,9 @@ def cadastro():
             senha=senha_hash,
             nome=data.get('nome', '').strip(),
             whatsapp=data.get('whatsapp', '').strip(),
-            whatsapp2=data.get('whatsapp2', '').strip()
+            whatsapp2=data.get('whatsapp2', '').strip(),
+            nome_contato=data.get('nome_contato', '').strip(),
+            nome_contato2=data.get('nome_contato2', '').strip()
         )
         db.session.add(user)
         db.session.commit()
@@ -137,6 +163,8 @@ def login():
         print(f"[LOGIN] Login bem-sucedido: {email}")
         return jsonify({"token": token, "usuario_id": user.id}), 200
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         print(f"[ERRO LOGIN] {str(e)}")
         return jsonify({"erro": f"Erro no servidor: {str(e)}"}), 500
 
@@ -148,8 +176,11 @@ def listar():
         meds = Medicamento.query.filter_by(usuario_id=user_id).all()
         return jsonify([{
             "id": m.id,
-            "nome": m.nome, 
+            "nome": m.nome,
             "dosagem": m.dosagem,
+            "horario": m.horario or '',
+            "intervalo": m.intervalo or 0,
+            "unidade": m.unidade or 'mg',
             "tomado": m.tomado
         } for m in meds]), 200
     except Exception as e:
@@ -164,11 +195,14 @@ def salvar():
         med = Medicamento(
             nome=data['nome'], 
             dosagem=data['dosagem'], 
+            horario=data.get('horario'),
+            intervalo=data.get('intervalo', 0),
+            unidade=data.get('unidade', 'mg'),
             usuario_id=user_id
         )
         db.session.add(med)
         db.session.commit()
-        return jsonify({"msg": "Medicamento salvo", "id": med.id}), 201
+        return jsonify({"msg": "Medicamento salvo", "id": med.id, "nome": med.nome}), 201
     except Exception as e:
         db.session.rollback()
         return jsonify({"erro": str(e)}), 500
@@ -205,6 +239,49 @@ def atualizar_status(med_id):
         db.session.rollback()
         return jsonify({"erro": str(e)}), 500
 
+@app.route('/api/perfil', methods=['GET'])
+@jwt_required()
+def get_perfil():
+    try:
+        user_id = get_jwt_identity()
+        user = Usuario.query.get(user_id)
+        if not user:
+            return jsonify({"erro": "Usuário não encontrado"}), 404
+        
+        return jsonify({
+            "id": user.id,
+            "nome": user.nome,
+            "email": user.email,
+            "whatsapp": user.whatsapp,
+            "whatsapp2": user.whatsapp2,
+            "nome_contato": user.nome_contato,
+            "nome_contato2": user.nome_contato2
+        }), 200
+    except Exception as e:
+        return jsonify({"erro": str(e)}), 500
+
+@app.route('/api/perfil', methods=['PUT'])
+@jwt_required()
+def update_perfil():
+    try:
+        user_id = get_jwt_identity()
+        user = Usuario.query.get(user_id)
+        if not user:
+            return jsonify({"erro": "Usuário não encontrado"}), 404
+        
+        data = request.json
+        if 'nome' in data: user.nome = data['nome']
+        if 'whatsapp' in data: user.whatsapp = data['whatsapp']
+        if 'whatsapp2' in data: user.whatsapp2 = data['whatsapp2']
+        if 'nome_contato' in data: user.nome_contato = data['nome_contato']
+        if 'nome_contato2' in data: user.nome_contato2 = data['nome_contato2']
+        
+        db.session.commit()
+        return jsonify({"msg": "Perfil atualizado com sucesso"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"erro": str(e)}), 500
+
 @app.route('/api/emergencia', methods=['POST'])
 @jwt_required()
 def enviar_emergencia():
@@ -235,7 +312,32 @@ def enviar_emergencia():
         db.session.rollback()
         return jsonify({"erro": str(e)}), 500
 
+@app.route('/api/logout', methods=['POST'])
+def logout():
+    return jsonify({"msg": "Logout realizado"}), 200
+
+@app.route('/api/relatorio', methods=['GET'])
+@jwt_required()
+def relatorio():
+    """Retorna o histrico de medicamentos do usuario para exportar como CSV."""
+    try:
+        user_id = get_jwt_identity()
+        meds = Medicamento.query.filter_by(usuario_id=user_id).all()
+        return jsonify([{
+            "nome": m.nome,
+            "dosagem": m.dosagem,
+            "horario": m.horario or '',
+            "intervalo": m.intervalo or 0,
+            "unidade": m.unidade or 'mg',
+            "status": 'Tomado' if m.tomado else 'Pendente'
+        } for m in meds]), 200
+    except Exception as e:
+        return jsonify({"erro": str(e)}), 500
+
 if __name__ == '__main__':
     with app.app_context():
+        # Ensure instances directory exists
+        if not os.path.exists('instance'):
+            os.makedirs('instance')
         db.create_all()
     app.run(debug=True, host='127.0.0.1', port=5000)

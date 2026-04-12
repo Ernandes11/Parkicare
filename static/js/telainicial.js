@@ -1,5 +1,5 @@
 
-// telainicial.js with Supabase Integration
+// telainicial.js - Flask Integration
 
 let currentMedId = null;
 let notificationTimeout = null;
@@ -43,16 +43,32 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function checkAuth() {
-    const { data: { session } } = await window.supabaseClient.auth.getSession();
-    if (!session) {
+    const token = localStorage.getItem('parkicare_token');
+    if (!token) {
         window.location.href = '/login';
         return;
     }
-    currentUser = session.user;
+
+    try {
+        const response = await fetch('/api/perfil', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!response.ok) {
+            // Se falhou (401 ou 422), limpa o token e volta ao login
+            localStorage.removeItem('parkicare_token');
+            window.location.href = '/login';
+            return;
+        }
+        currentUser = await response.json();
+    } catch (e) {
+        console.error("Auth check failed:", e);
+        localStorage.removeItem('parkicare_token');
+        window.location.href = '/login';
+    }
 }
 
 // ---------------------------------------------------------
-// DATA FETCHING (SUPABASE)
+// DATA FETCHING (Flask API)
 // ---------------------------------------------------------
 
 // Optimization: Cache meds to avoid fetching every second
@@ -61,15 +77,17 @@ let medicamentosCache = [];
 async function getMedicamentos() {
     if (!currentUser) return [];
     try {
-        const { data, error } = await window.supabaseClient
-            .from('medicamentos')
-            .select('*')
-            .order('horario', { ascending: true });
-
-        if (error) {
-            console.error('Error fetching meds:', error);
+        const token = localStorage.getItem('parkicare_token');
+        const response = await fetch('/api/medicamentos', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!response.ok) {
+            console.error('Error fetching meds');
             return [];
         }
+        
+        const data = await response.json();
         medicamentosCache = data || []; // Update cache
         return data;
     } catch (e) {
@@ -157,13 +175,14 @@ async function renderMedicamentos() {
 // ---------------------------------------------------------
 
 async function abrirDetalhes(id) {
-    const { data: med, error } = await window.supabaseClient
-        .from('medicamentos')
-        .select('*')
-        .eq('id', id)
-        .single();
+    const token = localStorage.getItem('parkicare_token');
+    const response = await fetch('/api/medicamentos', {
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const meds = await response.json();
+    const med = meds.find(m => m.id === id);
 
-    if (error || !med) return;
+    if (!med) return;
 
     currentDetailId = id;
     document.getElementById('detail-nome').innerText = med.nome;
@@ -198,26 +217,23 @@ function fecharDetalhes() {
 async function alternarStatusDetalhe() {
     if (!currentDetailId) return;
 
-    const { data: med } = await window.supabaseClient
-        .from('medicamentos')
-        .select('tomado, nome')
-        .eq('id', currentDetailId)
-        .single();
+    try {
+        const token = localStorage.getItem('parkicare_token');
+        const response = await fetch(`/api/medicamentos/${currentDetailId}/status`, {
+            method: 'PUT',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ tomado: undefined }) // Let backend toggle
+        });
 
-    if (!med) return;
-
-    const novoStatus = !med.tomado;
-
-    const { error } = await window.supabaseClient
-        .from('medicamentos')
-        .update({ tomado: novoStatus })
-        .eq('id', currentDetailId);
-
-    if (!error) {
-        const acao = novoStatus ? 'Tomado (Manual)' : 'Desmarcado (Manual)';
-        logHistory(currentDetailId, med.nome, acao);
-        renderMedicamentos();
-        fecharDetalhes();
+        if (response.ok) {
+            renderMedicamentos();
+            fecharDetalhes();
+        }
+    } catch (e) {
+        console.error("Error toggling status:", e);
     }
 }
 
@@ -225,12 +241,13 @@ async function excluirMedicamento() {
     if (!currentDetailId) return;
     if (!confirm('Tem certeza que deseja excluir?')) return;
 
-    const { error } = await window.supabaseClient
-        .from('medicamentos')
-        .delete()
-        .eq('id', currentDetailId);
+    const token = localStorage.getItem('parkicare_token');
+    const response = await fetch(`/api/medicamentos/${currentDetailId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
 
-    if (!error) {
+    if (response.ok) {
         renderMedicamentos();
         fecharDetalhes();
     } else {
@@ -243,7 +260,7 @@ async function excluirMedicamento() {
 // ---------------------------------------------------------
 
 async function checkNotifications() {
-    // USE LOCAL CACHE instead of fetching Supabase
+    // USE LOCAL CACHE instead of fetching from server every second
     // medicamentosCache is updated whenever renderMedicamentos() is called (on load or after actions)
 
     if (medicamentosCache.length === 0) return;
@@ -293,13 +310,13 @@ async function checkNotifications() {
             if (!alertedMeds.has(med.id)) {
                 alertedMeds.add(med.id);
                 currentMedId = med.id;
-                showModal();
+                showModal(med.id, med.nome);
             }
         }
     });
 }
 
-function showModal() {
+function showModal(medId, medNome) {
     const modal = document.getElementById('notification-modal');
     const button = document.querySelector('.notification-button');
 
@@ -324,17 +341,8 @@ function showModal() {
 
         notificationTimeout = setTimeout(async () => {
             clearInterval(countdownInterval);
-            if (currentMedId) {
-                // Fetch name for log
-                const { data: med } = await window.supabaseClient
-                    .from('medicamentos')
-                    .select('nome')
-                    .eq('id', currentMedId)
-                    .single();
-
-                if (med) {
-                    logHistory(currentMedId, med.nome, 'Não Tomado (Timeout)');
-                }
+            if (medId) {
+                logHistory(medId, medNome, 'Não Tomado (Timeout)');
             }
             closeModal();
             renderMedicamentos();
@@ -364,20 +372,17 @@ function closeModal() {
 
 async function confirmarTomada() {
     if (currentMedId) {
-        // Update DB
-        const { data: med } = await window.supabaseClient
-            .from('medicamentos')
-            .select('nome')
-            .eq('id', currentMedId)
-            .single();
+        const token = localStorage.getItem('parkicare_token');
+        const response = await fetch(`/api/medicamentos/${currentMedId}/status`, {
+            method: 'PUT',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ tomado: true })
+        });
 
-        const { error } = await window.supabaseClient
-            .from('medicamentos')
-            .update({ tomado: true })
-            .eq('id', currentMedId);
-
-        if (!error && med) {
-            logHistory(currentMedId, med.nome, 'Tomado (Notificação)');
+        if (response.ok) {
             renderMedicamentos();
         }
     }
@@ -385,17 +390,7 @@ async function confirmarTomada() {
 }
 
 async function logHistory(medId, medNome, status) {
-    if (!currentUser) return;
-
-    await window.supabaseClient
-        .from('historico')
-        .insert({
-            user_id: currentUser.id,
-            med_id: medId,
-            med_nome: medNome,
-            status: status,
-            data_evento: new Date().toISOString()
-        });
+    // Optional for now or implemented via separate activity endpoint
 }
 
 // ---------------------------------------------------------
@@ -453,25 +448,24 @@ function cancelarEmergencia() {
 function renderEmergencyContacts() {
     if (!currentUser) return;
 
-    const meta = currentUser.user_metadata || {};
     const container = document.getElementById('badge-contatos-emergencia');
     if (!container) return;
 
     container.innerHTML = '';
 
     // Contact 1
-    if (meta.whatsapp) {
-        const nome = meta.nome_contato || 'Contato 1';
-        container.innerHTML += `<div class="contact-badge">${nome}: ${formatarTel(meta.whatsapp)}</div>`;
+    if (currentUser.whatsapp) {
+        const nome = currentUser.nome_contato || 'Contato 1';
+        container.innerHTML += `<div class="contact-badge">${nome}: ${formatarTel(currentUser.whatsapp)}</div>`;
     }
 
     // Contact 2
-    if (meta.whatsapp2) {
-        const nome2 = meta.nome_contato2 || 'Contato 2';
-        container.innerHTML += `<div class="contact-badge">${nome2}: ${formatarTel(meta.whatsapp2)}</div>`;
+    if (currentUser.whatsapp2) {
+        const nome2 = currentUser.nome_contato2 || 'Contato 2';
+        container.innerHTML += `<div class="contact-badge">${nome2}: ${formatarTel(currentUser.whatsapp2)}</div>`;
     }
 
-    if (!meta.whatsapp && !meta.whatsapp2) {
+    if (!currentUser.whatsapp && !currentUser.whatsapp2) {
         container.innerHTML = '<p style="color:red">Nenhum contato configurado!</p>';
     }
 }
@@ -489,9 +483,9 @@ function formatarTel(tel) {
 async function enviarEmergencia() {
     cancelarEmergencia();
 
-    // 1. Registrar no Servidor Flask (sem prejuízo à lógica Supabase)
+    // 1. Registrar alerta no Servidor Flask
     try {
-        const token = localStorage.getItem("token"); // Token do Flask se existir
+        const token = localStorage.getItem('parkicare_token');
         await fetch('/api/emergencia', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
@@ -501,19 +495,18 @@ async function enviarEmergencia() {
         console.log("Servidor Flask offline ou erro na API de emergência:", e);
     }
 
-    // 2. Lógica Original Supabase/WhatsApp
-    if (!currentUser || !currentUser.user_metadata) {
+    // 2. Lógica Original WhatsApp
+    if (!currentUser) {
         alert("Erro: Usuário não identificado.");
         return;
     }
 
-    const meta = currentUser.user_metadata;
     const message = "SOCORRO! Preciso de ajuda urgente!";
     const encodedMsg = encodeURIComponent(message);
 
     const contatos = [];
-    if (meta.whatsapp) contatos.push(meta.whatsapp);
-    if (meta.whatsapp2) contatos.push(meta.whatsapp2);
+    if (currentUser.whatsapp) contatos.push(currentUser.whatsapp);
+    if (currentUser.whatsapp2) contatos.push(currentUser.whatsapp2);
 
     if (contatos.length === 0) {
         const url = `https://wa.me/?text=${encodedMsg}`;
