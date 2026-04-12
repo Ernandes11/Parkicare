@@ -45,7 +45,7 @@ if (form) {
             if (error) throw error;
 
             // Redirect
-            window.location.href = 'telaproxima.html';
+            window.location.href = '/proxima';
 
         } catch (err) {
             console.error("Erro login:", err);

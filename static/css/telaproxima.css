@@ -55,7 +55,7 @@ body {
     /* Ajuste conforme o tamanho da sua imagem */
     height: 40px;
     /* Ajuste conforme o tamanho da sua imagem */
-    background-image: url('../assets/img/logoParkicare.png');
+    background-image: url('../img/logoParkicare.png');
     /* **ANEXE AQUI O LINK DA IMAGEM DA TULIPA** */
     background-size: contain;
     background-repeat: no-repeat;
@@ -127,7 +127,7 @@ body {
     /* Ajuste conforme o tamanho da sua imagem */
     height: 18px;
     /* Ajuste conforme o tamanho da sua imagem */
-    background-image: url('../assets/img/brilhar.png');
+    background-image: url('../img/brilhar.png');
     /* **ANEXE AQUI O LINK DA IMAGEM DA ESTRELINHA/BULLET** */
     background-size: contain;
     background-repeat: no-repeat;
@@ -188,7 +188,7 @@ body {
     width: 100%;
     height: 180px;
     /* Ajuste a altura conforme a sua imagem PNG da onda */
-    background-image: url('../assets/img/formaverde.png');
+    background-image: url('../img/formaverde.png');
     background-size: cover;
     background-repeat: no-repeat;
     background-position: -20px bottom;

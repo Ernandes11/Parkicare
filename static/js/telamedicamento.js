@@ -5,7 +5,7 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const { data: { session } } = await window.supabaseClient.auth.getSession();
     if (!session) {
-        window.location.href = 'telalogin.html';
+        window.location.href = '/login';
     }
 });
 
@@ -27,7 +27,7 @@ if (form) {
 
         if (!user) {
             alert('Erro de autenticação. Faça login novamente.');
-            window.location.href = 'telalogin.html';
+            window.location.href = '/login';
             return;
         }
 
@@ -51,7 +51,7 @@ if (form) {
         }
 
         alert('Medicamento cadastrado com sucesso!');
-        window.location.href = 'telainicial.html';
+        window.location.href = '/inicial';
     });
 }
 

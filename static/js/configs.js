@@ -206,7 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     currentAudio.pause();
                     currentAudio.currentTime = 0;
                 }
-                currentAudio = new Audio(`assets/audio/${selectedSound}.mp3`);
+                currentAudio = new Audio(`/static/audio/${selectedSound}.mp3`);
                 currentAudio.play().catch(error => console.log("Audio file likely missing:", error));
             });
         }

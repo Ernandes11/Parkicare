@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Configurações - ParkiCare</title>
-    <link rel="stylesheet" href="css/configs.css">
-    <link rel="stylesheet" href="css/accessibility.css">
-    <script src="js/accessibility-loader.js"></script>
+    <link rel="stylesheet" href="/static/css/configs.css">
+    <link rel="stylesheet" href="/static/css/accessibility.css">
+    <script src="/static/js/accessibility-loader.js"></script>
 </head>
 <body class="configs-page-bg">
 
@@ -14,8 +14,8 @@
 
         <!-- CABEÇALHO -->
         <div class="config-header">
-            <button class="close-btn" onclick="window.location.href='telainicial.html'" aria-label="Voltar">
-                <img src="assets/img/excluir (1).png" alt="Fechar" width="46" height="46">
+            <button class="close-btn" onclick="window.location.href='/inicial'" aria-label="Voltar">
+                <img src="/static/img/excluir (1).png" alt="Fechar" width="46" height="46">
             </button>
             <h1>Configurações</h1>
         </div>
@@ -26,7 +26,7 @@
                 <!-- Acessibilidade -->
                 <div class="config-section">
                     <div class="icon-label title-label">
-                        <img src="assets/img/acessibilidade.png" alt="Acessibilidade" width="24" height="24">
+                        <img src="/static/img/acessibilidade.png" alt="Acessibilidade" width="24" height="24">
                         <strong>Acessibilidade</strong>
                     </div>
                     
@@ -42,7 +42,7 @@
                 <!-- Tamanho dos Botões -->
                 <div class="config-section">
                     <div class="icon-label title-label">
-                        <img src="assets/img/tamanho.png" alt="Tamanho botões" width="24" height="24">
+                        <img src="/static/img/tamanho.png" alt="Tamanho botões" width="24" height="24">
                         <strong>Tamanho dos botões :</strong>
                     </div>
                     <div class="radio-list">
@@ -67,7 +67,7 @@
                 <!-- Tamanho da Fonte -->
                 <div class="config-section">
                     <div class="icon-label title-label">
-                        <img src="assets/img/fonte-do-texto.png" alt="Tamanho fonte" width="28" height="28">
+                        <img src="/static/img/fonte-do-texto.png" alt="Tamanho fonte" width="28" height="28">
                         <strong>Tamanho da fonte:</strong>
                     </div>
                     <div class="radio-list">
@@ -94,13 +94,13 @@
         <!-- CARTÃO ALERTAS -->
         <div class="card card-alertas">
             <div class="card-title title-label">
-                <img src="assets/img/perigo.png" alt="Alertas" width="24" height="24">
+                <img src="/static/img/perigo.png" alt="Alertas" width="24" height="24">
                 <span>Alertas</span>
             </div>
             
             <div class="card-body">
                 <div class="icon-label title-label">
-                    <img src="assets/img/volume.png" alt="Som" width="26" height="26">
+                    <img src="/static/img/volume.png" alt="Som" width="26" height="26">
                     <strong>Tipos de alerta</strong>
                 </div>
                 <!-- Select para o tipo de som -->
@@ -115,7 +115,7 @@
         <!-- CARTÃO EMERGÊNCIA -->
         <div class="card card-emergencia">
             <div class="card-title title-label">
-                <img src="assets/img/telefone.png" alt="Emergência" width="24" height="24">
+                <img src="/static/img/telefone.png" alt="Emergência" width="24" height="24">
                 <span>Emergência</span>
             </div>
             
@@ -151,16 +151,16 @@
             <div class="contact-buttons">
                 <!-- Check Verde -->
                 <button class="square-btn green-sq" onclick="salvarContato()">
-                    <img src="assets/img/icone_check.png" alt="Save" width="24" height="24">
+                    <img src="/static/img/icone_check.png" alt="Save" width="24" height="24">
                 </button>
                 <!-- X Vermelho -->
                 <button class="square-btn red-sq" onclick="fecharModalContato()">
-                    <img src="assets/img/icone_x.png" alt="Cancel" width="24" height="24">
+                    <img src="/static/img/icone_x.png" alt="Cancel" width="24" height="24">
                 </button>
             </div>
         </div>
     </div>
 
-    <script src="js/configs.js"></script>
+    <script src="/static/js/configs.js"></script>
 </body>
 </html>

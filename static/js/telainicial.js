@@ -20,7 +20,7 @@ function playSound() {
         const savedSound = localStorage.getItem('parkicare_alarmSound');
         const soundName = savedSound ? JSON.parse(savedSound) : 'padrao';
 
-        currentAlarmAudio = new Audio(`assets/audio/${soundName}.mp3`);
+        currentAlarmAudio = new Audio(`/static/audio/${soundName}.mp3`);
         currentAlarmAudio.loop = true; // Optional: keep playing until action
         currentAlarmAudio.play().catch(e => console.error("Error playing alarm sound:", e));
 
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function checkAuth() {
     const { data: { session } } = await window.supabaseClient.auth.getSession();
     if (!session) {
-        window.location.href = 'telalogin.html';
+        window.location.href = '/login';
         return;
     }
     currentUser = session.user;
@@ -486,9 +486,22 @@ function formatarTel(tel) {
     return tel;
 }
 
-function enviarEmergencia() {
+async function enviarEmergencia() {
     cancelarEmergencia();
 
+    // 1. Registrar no Servidor Flask (sem prejuízo à lógica Supabase)
+    try {
+        const token = localStorage.getItem("token"); // Token do Flask se existir
+        await fetch('/api/emergencia', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+            body: JSON.stringify({ timestamp: new Date().toISOString(), tipo: 'emergencia' })
+        });
+    } catch (e) {
+        console.log("Servidor Flask offline ou erro na API de emergência:", e);
+    }
+
+    // 2. Lógica Original Supabase/WhatsApp
     if (!currentUser || !currentUser.user_metadata) {
         alert("Erro: Usuário não identificado.");
         return;
@@ -513,6 +526,6 @@ function enviarEmergencia() {
             const cleanNum = tel.replace(/\D/g, '');
             const url = `https://wa.me/${cleanNum}?text=${encodedMsg}`;
             window.open(url, '_blank');
-        }, index * 1000); // Small delay to help browsers allow multiple popups
+        }, index * 1000);
     });
 }

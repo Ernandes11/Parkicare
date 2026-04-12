@@ -96,7 +96,7 @@ input::placeholder {
   width: 24px;
   height: 24px;
   cursor: pointer;
-  background-image: url('../assets/img/olho.png');
+  background-image: url('../img/olho.png');
   background-size: 48px 24px;
   background-repeat: no-repeat;
   background-position: 0 0;

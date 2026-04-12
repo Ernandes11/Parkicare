@@ -9,7 +9,7 @@ ctx.strokeStyle = "#5B2C2C";
 
 // imagem de fundo do espiral
 const espiral = new Image();
-espiral.src = "assets/img/espiral.png";
+espiral.src = "/static/img/espiral.png";
 
 espiral.onload = () => {
     ctx.globalAlpha = 0.25;
