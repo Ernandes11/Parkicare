@@ -24,7 +24,13 @@
         </div>
 
         <div class="input-group">
-          <label for="whatsapp">Telefone de Emergência (DDD + Número)</label>
+          <label for="nome_contato">Nome do Contato de Emergência</label>
+          <input type="text" id="nome_contato" name="nome_contato" placeholder="Ex: Maria Silva" required autocomplete="off">
+          <p class="error-text" id="nome-contato-error"></p>
+        </div>
+
+        <div class="input-group">
+          <label for="whatsapp">Telefone do Contato (DDD + Número)</label>
           <input type="tel" id="whatsapp" name="whatsapp" placeholder="Ex: 11999999999" required autocomplete="tel">
           <p class="error-text" id="whatsapp-error"></p>
         </div>

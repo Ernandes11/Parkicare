@@ -159,7 +159,7 @@ def login():
             print(f"[LOGIN] Senha incorreta para: {email}")
             return jsonify({"erro": "Email ou senha incorretos"}), 401
         
-        token = create_access_token(identity=user.id)
+        token = create_access_token(identity=str(user.id))
         print(f"[LOGIN] Login bem-sucedido: {email}")
         return jsonify({"token": token, "usuario_id": user.id}), 200
     except Exception as e:
@@ -172,7 +172,7 @@ def login():
 @jwt_required()
 def listar():
     try:
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
         meds = Medicamento.query.filter_by(usuario_id=user_id).all()
         return jsonify([{
             "id": m.id,
@@ -191,7 +191,7 @@ def listar():
 def salvar():
     try:
         data = request.json
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
         med = Medicamento(
             nome=data['nome'], 
             dosagem=data['dosagem'], 
@@ -211,7 +211,7 @@ def salvar():
 @jwt_required()
 def deletar_medicamento(med_id):
     try:
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
         med = Medicamento.query.filter_by(id=med_id, usuario_id=user_id).first()
         if not med:
             return jsonify({"erro": "Medicamento não encontrado"}), 404
@@ -226,7 +226,7 @@ def deletar_medicamento(med_id):
 @jwt_required()
 def atualizar_status(med_id):
     try:
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
         med = Medicamento.query.filter_by(id=med_id, usuario_id=user_id).first()
         if not med:
             return jsonify({"erro": "Medicamento não encontrado"}), 404
@@ -243,7 +243,7 @@ def atualizar_status(med_id):
 @jwt_required()
 def get_perfil():
     try:
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
         user = Usuario.query.get(user_id)
         if not user:
             return jsonify({"erro": "Usuário não encontrado"}), 404
@@ -264,7 +264,7 @@ def get_perfil():
 @jwt_required()
 def update_perfil():
     try:
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
         user = Usuario.query.get(user_id)
         if not user:
             return jsonify({"erro": "Usuário não encontrado"}), 404
@@ -286,7 +286,7 @@ def update_perfil():
 @jwt_required()
 def enviar_emergencia():
     try:
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
         data = request.json
         
         # Salvar alerta de emergência no banco
@@ -321,7 +321,7 @@ def logout():
 def relatorio():
     """Retorna o histrico de medicamentos do usuario para exportar como CSV."""
     try:
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
         meds = Medicamento.query.filter_by(usuario_id=user_id).all()
         return jsonify([{
             "nome": m.nome,
