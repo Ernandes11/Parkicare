@@ -81,7 +81,7 @@ body.font-large select {
     font-size: 1.2rem !important;
 }
 
-/* Big Buttons */
+/* Big Buttons (Legacy Support) */
 body.mode-big-buttons button,
 body.mode-big-buttons .menu-btn,
 body.mode-big-buttons .btn-emergency,
@@ -89,8 +89,60 @@ body.mode-big-buttons input[type="radio"],
 body.mode-big-buttons input[type="checkbox"],
 body.mode-big-buttons select,
 body.mode-big-buttons .switch {
-    transform: scale(1.2) !important;
+    transform: scale(1.15) !important;
     margin: 10px;
     transform-origin: left center;
-    /* Keeps it aligned */
+}
+
+/* New Specific Button Sizing */
+body.btn-small button, 
+body.btn-small .outline-btn,
+body.btn-small .solid-btn {
+    padding: 6px 12px !important;
+    font-size: 0.85rem !important;
+}
+
+body.btn-large button:not(.close-btn), 
+body.btn-large .outline-btn,
+body.btn-large .solid-btn {
+    padding: 18px 24px !important;
+    font-size: 1.3rem !important;
+    border-width: 2px !important;
+}
+
+/* Enhanced High Contrast for Modern UI (Cards) */
+body.mode-high-contrast .card,
+body.mode-high-contrast .configs-wrapper,
+body.mode-high-contrast .left-panel,
+body.mode-high-contrast .right-panel {
+    background-color: #000 !important;
+    border: 2px solid #FFFF00 !important;
+    box-shadow: none !important;
+}
+
+body.mode-high-contrast .outline-btn,
+body.mode-high-contrast .contact-input {
+    background-color: #000 !important;
+    border: 2px solid #FFFF00 !important;
+    color: #FFFF00 !important;
+}
+
+body.mode-high-contrast .solid-btn,
+body.mode-high-contrast .green-sq,
+body.mode-high-contrast .red-sq {
+    background-color: #FFFF00 !important;
+    color: #000 !important;
+    border: 2px solid #FFFFFF !important;
+}
+
+body.mode-high-contrast img {
+    filter: brightness(0) invert(1) hue-rotate(60deg) saturate(1000%) !important; /* Forces yellow-ish or high visibility */
+}
+
+body.mode-high-contrast .close-btn circle {
+    fill: #FFFF00 !important;
+}
+
+body.mode-high-contrast .close-btn path {
+    stroke: #000 !important;
 }

@@ -1,0 +1,161 @@
+/* telacadastro.css - New Pill Design */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background-color: #ffffff; /* Same as the card */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+}
+
+.container {
+  width: 100%;
+  max-width: 450px; /* Keep it from stretching on desktop */
+  min-height: 100vh; /* Full height for app feel */
+  background: #ffffff;
+  padding: 40px 25px;
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto; /* Center on larger screens */
+  box-shadow: 0 0 20px rgba(0,0,0,0.05); /* Soft shadow for desktop context */
+}
+
+.form-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.main-title {
+  color: #000;
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 8px;
+  text-align: left;
+}
+
+.sub-title {
+  color: #666;
+  font-size: 16px;
+  margin-bottom: 30px;
+  text-align: left;
+}
+
+/* Input Groups */
+.input-group {
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group label {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+  margin-left: 5px;
+  text-align: left;
+}
+
+input {
+  width: 100%;
+  padding: 15px 20px;
+  border-radius: 30px; /* Pill shape */
+  border: none;
+  background-color: #f2f2f2; /* Light grey background */
+  font-size: 15px;
+  color: #333;
+  outline: none;
+  transition: background-color 0.2s;
+}
+
+input:focus {
+  background-color: #e8e8e8;
+}
+
+input::placeholder {
+  color: #999;
+}
+
+/* Password Wrapper */
+.pill-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.eye-toggle {
+  position: absolute;
+  right: 18px;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  background-image: url('../assets/img/olho.png');
+  background-size: 48px 24px;
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  opacity: 0.6;
+}
+
+.eye-toggle.active {
+  background-position: -24px 0;
+}
+
+/* Errors */
+.error-text {
+  color: #c43224;
+  font-size: 12px;
+  margin-top: 5px;
+  margin-left: 15px;
+  text-align: left;
+  min-height: 15px;
+}
+
+/* Footer & Button */
+.form-footer {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.btn-primary {
+  width: 100%;
+  background-color: #43a082; /* ParkiCare Green */
+  color: white;
+  border: none;
+  padding: 16px;
+  border-radius: 30px;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+  margin-bottom: 20px;
+}
+
+.btn-primary:hover {
+  background-color: #36856b;
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+.login-link {
+  font-size: 14px;
+  color: #666;
+}
+
+.login-link a {
+  color: #43a082;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.login-link a:hover {
+  text-decoration: underline;
+}

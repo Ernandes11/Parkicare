@@ -1,15 +1,22 @@
 // telacadastro.js
 const form = document.getElementById('registerForm');
 const toggleSenha = document.getElementById('toggleSenha');
+const toggleConfirmarSenha = document.getElementById('toggleConfirmarSenha');
 const senha = document.getElementById('senha');
+const confirmarSenhaInput = document.getElementById('confirmar_senha');
 
-if (toggleSenha && senha) {
-  toggleSenha.addEventListener('click', () => {
-    const tipo = senha.getAttribute('type') === 'password' ? 'text' : 'password';
-    senha.setAttribute('type', tipo);
-    toggleSenha.classList.toggle('active');
-  });
+function setupToggle(toggle, input) {
+  if (toggle && input) {
+    toggle.addEventListener('click', () => {
+      const tipo = input.getAttribute('type') === 'password' ? 'text' : 'password';
+      input.setAttribute('type', tipo);
+      toggle.classList.toggle('active');
+    });
+  }
 }
+
+setupToggle(toggleSenha, senha);
+setupToggle(toggleConfirmarSenha, confirmarSenhaInput);
 
 if (form) {
   form.addEventListener('submit', async (e) => {
@@ -46,7 +53,7 @@ if (form) {
 
     // Supabase Sign Up
     try {
-      const btn = form.querySelector('button');
+      const btn = form.querySelector('button.btn-primary');
       const originalText = btn.innerText;
       btn.disabled = true;
       btn.innerText = 'Criando conta...';
@@ -79,10 +86,10 @@ if (form) {
       console.error("Erro cadastro:", err);
       showError('email', 'Erro ao criar conta: ' + (err.message || 'Tente novamente.'));
     } finally {
-      const btn = form.querySelector('button');
+      const btn = form.querySelector('button.btn-primary');
       if (btn) {
         btn.disabled = false;
-        btn.innerText = 'Vamos começar!';
+        btn.innerText = 'Criar Conta';
       }
     }
   });

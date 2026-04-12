@@ -79,34 +79,173 @@ body {
 h1 {
   font-size: 24px;
   margin: 0;
-  color: #7d0f99;
+  color: #000; /* Black as requested */
 }
 
 p.subtitle {
   font-size: 15px;
-  color: #571b7afb;
+  color: #000; /* Black as requested */
   margin-top: 2px;
 }
 
-/* Botão de Emergência */
-.btn-emergency {
-  display: block;
-  background-color: #ff4b4b;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 17px;
-  font-size: 16px;
-  margin: 24px auto;
-  cursor: pointer;
-  animation: pulse 2.5s infinite ease-in-out;
-  transition: transform 0.2s, background-color 0.2s;
+/* NEW: Top Emergency Pill */
+.emergency-container-top {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0 30px;
 }
 
-.btn-emergency:hover {
-  animation: none;
+.btn-emergency-pill {
+  background-color: #c43224;
+  color: white;
+  border: none;
+  border-radius: 40px;
+  padding: 12px 25px; /* More harmonic padding */
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(196, 50, 36, 0.3);
+  transition: transform 0.2s, background-color 0.2s;
+  width: 80%;
+  max-width: 200px; /* Reduced width for harmony */
+}
+
+.btn-emergency-pill:hover {
   transform: scale(1.05);
-  background-color: #ff3333;
+  background-color: #a3291d;
+}
+
+/* NEW: Section Title Alt */
+.section-title-alt {
+  font-size: 22px;
+  font-weight: 800;
+  color: #000;
+  margin: 0 0 20px 10px;
+}
+
+/* NEW: Medication List & Cards */
+.new-med-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 40px;
+}
+
+.new-med-card {
+  background-color: #fdfaf4;
+  border-radius: 20px;
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.03);
+  border: 1px solid #eee;
+  cursor: pointer;
+}
+
+.new-med-time {
+  font-size: 20px;
+  font-weight: 800;
+  color: #333;
+  min-width: 60px;
+}
+
+.new-med-info {
+  flex: 1;
+}
+
+.new-med-info h4 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #000;
+}
+
+.new-med-info p {
+  margin: 2px 0 0;
+  font-size: 14px;
+  color: #43a082;
+  font-weight: 600;
+}
+
+/* Status Badges */
+.status-badge {
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 15px;
+  font-weight: 700;
+  text-align: center;
+  min-width: 100px;
+}
+
+.status-badge.tomado {
+  background-color: #43a082;
+  color: white;
+}
+
+.status-badge.atrasado {
+  background-color: #fee2e2;
+  color: #ef4444;
+}
+
+/* NEW: Action Cards (Bottom) */
+.action-cards-container {
+  display: flex;
+  gap: 15px;
+  margin-top: auto;
+  padding-bottom: 10px;
+}
+
+.action-card {
+  flex: 1;
+  background-color: #92312b; /* Burgundy/Brown */
+  border-radius: 30px;
+  padding: 20px 15px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 140px; /* Reduced from 180px */
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s;
+}
+
+.action-card:hover {
+  transform: translateY(-5px);
+}
+
+.card-info h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.card-info p {
+  margin: 5px 0 0;
+  font-size: 11px;
+  opacity: 0.9;
+  line-height: 1.2;
+}
+
+.card-icon {
+  width: 45px;
+  height: 45px;
+  align-self: flex-start;
+}
+
+/* Decorative dot cross pattern (approximation) */
+.action-card::before {
+  content: "";
+  position: absolute;
+  top: 40px;
+  left: 20px;
+  width: 12px;
+  height: 12px;
+  background-color: #9254d8; /* Purple */
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  opacity: 0.8;
 }
 
 /* Título de seção */
@@ -226,71 +365,74 @@ p.subtitle {
 }
 
 /* Modal Emergência Redesign */
+/* New Emergency Modal Styles */
 .emergency-content {
-  border-top: none;
-  padding-top: 10px;
-  background-color: #fafdf3;
+    background-color: #fdfaf4 !important;
+    border-radius: 40px !important;
+    padding: 30px !important;
+    border: 1px solid #777 !important;
 }
 
-.emergency-icon-container {
-  margin-bottom: 5px;
+.emergency-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 25px;
 }
 
-.siren-icon {
-  width: 60px;
-  height: auto;
+.emergency-main-icon {
+    width: 60px;
+    height: 60px;
 }
 
-.emergency-text {
-  font-size: 14px;
-  color: #555;
-  margin-bottom: 20px;
-  line-height: 1.4;
-  font-weight: normal;
+.emergency-description {
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    color: #000 !important;
+    line-height: 1.3 !important;
+    margin-bottom: 30px !important;
 }
 
-.contacts-label-centered {
-  font-size: 14px;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 15px;
+.badge-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center the badges */
+    gap: 12px;
+    margin-bottom: 30px;
 }
 
-.contact-list-clean {
-  margin-bottom: 20px;
+.contact-badge {
+    background-color: #c43224;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    box-shadow: 0 4px 4px rgba(0,0,0,0.1);
+    width: fit-content; /* Make them only as long as the text */
 }
 
-.contact-item {
-  margin-bottom: 10px;
+.emergency-footer {
+    display: flex;
+    justify-content: center;
 }
 
-.contact-item strong {
-  display: block;
-  font-size: 16px;
-  color: #000;
+.btn-cancel-pill {
+    background-color: #fdfaf4 !important;
+    color: #000 !important;
+    border: 1px solid #c43224 !important;
+    padding: 10px 40px !important;
+    border-radius: 20px !important;
+    font-size: 22px !important;
+    font-weight: 500 !important;
+    cursor: pointer;
+    transition: background-color 0.2s;
 }
 
-.contact-item small {
-  font-size: 13px;
-  color: #444;
-}
-
-.btn-cancel-grey {
-  background-color: #f0f0f0 !important;
-  /* Light Grey */
-  color: #000 !important;
-  width: auto;
-  min-width: 150px;
-  padding: 10px 30px !important;
-  font-size: 14px !important;
-  border-radius: 20px;
-  font-weight: bold;
-  margin-top: 10px;
-  box-shadow: none;
-}
-
-.btn-cancel-grey:hover {
-  background-color: #e0e0e0 !important;
+.btn-cancel-pill:hover {
+    background-color: #fff0f0 !important;
 }
 
 /* Notification Modal Specific Styles */
@@ -317,52 +459,71 @@ p.subtitle {
 }
 
 .notification-content {
-  background-color: #faf8f0 !important;
-  padding: 35px 30px !important;
+  background-color: #fbf8ea !important;
+  padding: 30px 25px !important;
+  border-radius: 8px !important;
+}
+
+.notification-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 15px !important;
+  margin-bottom: 25px !important;
 }
 
 .notification-bell {
-  margin-bottom: 20px;
+  background-color: #43a082 !important;
+  width: 60px !important;
+  height: 60px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  margin: 0 !important;
+  flex-shrink: 0 !important;
 }
 
 .notification-bell img {
-  width: 70px;
-  height: auto;
-  filter: brightness(0) saturate(100%) invert(27%) sepia(93%) saturate(6289%) hue-rotate(358deg) brightness(98%) contrast(114%);
+  width: 32px !important;
+  height: auto !important;
+  filter: brightness(0) invert(1) !important;
   animation: bellRing 2s ease-in-out infinite;
 }
 
 .notification-title {
-  color: #5a5a5a !important;
-  font-size: 20px !important;
-  font-weight: 600 !important;
-  margin: 15px 0 !important;
-  line-height: 1.4 !important;
+  color: #333333 !important;
+  font-size: 21px !important;
+  font-weight: 700 !important;
+  margin: 0 !important;
+  text-align: left !important;
 }
 
 .notification-text {
-  color: #6a6a6a !important;
-  font-size: 13px !important;
-  margin: 15px 0 25px !important;
-  line-height: 1.5 !important;
-  font-weight: 400 !important;
+  color: #726b64 !important;
+  font-size: 15px !important;
+  margin: 0 0 25px !important;
+  line-height: 1.4 !important;
+  font-weight: 700 !important;
+  text-align: center !important;
 }
 
 .notification-button {
-  background-color: #6b9e5f !important;
+  background-color: #43a082 !important;
   color: white !important;
   border: none !important;
-  border-radius: 25px !important;
-  padding: 12px 40px !important;
-  font-size: 15px !important;
+  border-radius: 4px !important;
+  padding: 14px 20px !important;
+  font-size: 18px !important;
   font-weight: 600 !important;
+  width: 100% !important;
   cursor: pointer !important;
   transition: background-color 0.3s !important;
-  margin-top: 10px !important;
+  margin-top: 5px !important;
 }
 
 .notification-button:hover {
-  background-color: #5a8d4f !important;
+  background-color: #36856b !important;
 }
 
 /* General Modal Icon */

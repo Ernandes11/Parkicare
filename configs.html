@@ -1,97 +1,166 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Configurações - ParkiCare</title>
-    <link rel="stylesheet" href="configs.css">
-    <link rel="stylesheet" href="accessibility.css">
+    <link rel="stylesheet" href="css/configs.css">
+    <link rel="stylesheet" href="css/accessibility.css">
+    <script src="js/accessibility-loader.js"></script>
 </head>
+<body class="configs-page-bg">
 
-<body>
-    <main class="settings-container">
-        <div class="settings-header">
-            <button class="btn-back-arrow" onclick="window.location.href='telainicial.html'">
-                <img src="icone_voltar_novo.png" alt="Voltar">
+    <div class="configs-wrapper">
+
+        <!-- CABEÇALHO -->
+        <div class="config-header">
+            <button class="close-btn" onclick="window.location.href='telainicial.html'" aria-label="Voltar">
+                <img src="assets/img/excluir (1).png" alt="Fechar" width="46" height="46">
             </button>
             <h1>Configurações</h1>
         </div>
 
-        <!-- 1. Acessibilidade Visual e Motora -->
-        <section class="setting-group">
-            <h2>Acessibilidade visual e motora</h2>
+        <!-- CARTÃO ACESSIBILIDADE -->
+        <div class="card card-config">
+            <div class="config-body">
+                <!-- Acessibilidade -->
+                <div class="config-section">
+                    <div class="icon-label title-label">
+                        <img src="assets/img/acessibilidade.png" alt="Acessibilidade" width="24" height="24">
+                        <strong>Acessibilidade</strong>
+                    </div>
+                    
+                    <div class="config-item">
+                        <label class="custom-radio-container">
+                            <span class="label-text">Alto Contraste</span>
+                            <input type="checkbox" id="high-contrast-toggle">
+                            <span class="checkmark"></span>
+                        </label>
+                    </div>
+                </div>
 
-            <!-- Tamanho da fonte -->
-            <h3>Tamanho da fonte</h3>
-            <p>Escolha o tamanho do texto da interface.</p>
-            <div class="font-size-options">
-                <label><input type="radio" name="font-size" value="small"> Pequeno</label>
-                <label><input type="radio" name="font-size" value="medium" checked> Médio</label>
-                <label><input type="radio" name="font-size" value="large"> Grande</label>
+                <!-- Tamanho dos Botões -->
+                <div class="config-section">
+                    <div class="icon-label title-label">
+                        <img src="assets/img/tamanho.png" alt="Tamanho botões" width="24" height="24">
+                        <strong>Tamanho dos botões :</strong>
+                    </div>
+                    <div class="radio-list">
+                        <label class="custom-radio-container">
+                            <span class="label-text">Pequeno</span>
+                            <input type="radio" name="btn-size" value="small">
+                            <span class="checkmark radio-check"></span>
+                        </label>
+                        <label class="custom-radio-container">
+                            <span class="label-text">Médio</span>
+                            <input type="radio" name="btn-size" value="medium" checked>
+                            <span class="checkmark radio-check"></span>
+                        </label>
+                        <label class="custom-radio-container">
+                            <span class="label-text">Grande</span>
+                            <input type="radio" name="btn-size" value="large">
+                            <span class="checkmark radio-check"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Tamanho da Fonte -->
+                <div class="config-section">
+                    <div class="icon-label title-label">
+                        <img src="assets/img/fonte-do-texto.png" alt="Tamanho fonte" width="28" height="28">
+                        <strong>Tamanho da fonte:</strong>
+                    </div>
+                    <div class="radio-list">
+                        <label class="custom-radio-container">
+                            <span class="label-text">Pequeno</span>
+                            <input type="radio" name="font-size" value="small">
+                            <span class="checkmark radio-check"></span>
+                        </label>
+                        <label class="custom-radio-container">
+                            <span class="label-text">Médio</span>
+                            <input type="radio" name="font-size" value="medium" checked>
+                            <span class="checkmark radio-check"></span>
+                        </label>
+                        <label class="custom-radio-container">
+                            <span class="label-text">Grande</span>
+                            <input type="radio" name="font-size" value="large">
+                            <span class="checkmark radio-check"></span>
+                        </label>
+                    </div>
+                </div>
             </div>
+        </div>
 
-            <!-- Modo botões grandes -->
-            <h3>Tamanho dos botões </h3>
-            <p>Aumenta o tamanho dos botões para facilitar o toque.</p>
-            <label class="switch">
-                <input type="checkbox" id="big-buttons-toggle">
-                <span class="slider round"></span>
-            </label>
-
-            <!-- Alto contraste -->
-            <h3>Alto contraste</h3>
-            <p>Altera as cores para facilitar a leitura (preto/amarelo ou preto/branco).</p>
-            <label class="switch">
-                <input type="checkbox" id="high-contrast-toggle">
-                <span class="slider round"></span>
-            </label>
-        </section>
-
-        <!-- 2. Ajustes de Alertas e Som -->
-        <section class="setting-group">
-            <h2>Alertas e som</h2>
-
-            <!-- Volume e vibração -->
-            <h3>Tipo de alerta</h3>
-            <p>Escolha como o alarme será disparado.</p>
-            <div class="alert-options">
-                <label><input type="radio" name="alert-type" value="sound-vibration" checked> Som + vibração</label>
-                <label><input type="radio" name="alert-type" value="sound-only"> Apenas som</label>
-                <label><input type="radio" name="alert-type" value="vibration-only"> Apenas vibração</label>
+        <!-- CARTÃO ALERTAS -->
+        <div class="card card-alertas">
+            <div class="card-title title-label">
+                <img src="assets/img/perigo.png" alt="Alertas" width="24" height="24">
+                <span>Alertas</span>
             </div>
+            
+            <div class="card-body">
+                <div class="icon-label title-label">
+                    <img src="assets/img/volume.png" alt="Som" width="26" height="26">
+                    <strong>Tipos de alerta</strong>
+                </div>
+                <!-- Select para o tipo de som -->
+                <select id="alarm-sound-select" class="outline-btn">
+                    <option value="suave">Som suave</option>
+                    <option value="padrao" selected>Som padrão</option>
+                    <option value="estridente">Som estridente</option>
+                </select>
+            </div>
+        </div>
 
-            <!-- Som do alarme -->
-            <h3>Som do alarme</h3>
-            <p>Selecione o tipo de som.</p>
-            <select id="alarm-sound-select">
-                <option value="suave">Som suave</option>
-                <option value="padrao" selected>Som padrão</option>
-                <option value="estridente">Som estridente</option>
-            </select>
-        </section>
+        <!-- CARTÃO EMERGÊNCIA -->
+        <div class="card card-emergencia">
+            <div class="card-title title-label">
+                <img src="assets/img/telefone.png" alt="Emergência" width="24" height="24">
+                <span>Emergência</span>
+            </div>
+            
+            <div class="card-body">
+                <p class="desc-text">Defina quanto tempo terá para cancelar um alarme antes de avisar aos seus contatos</p>
+                <select id="emergency-timer-select" class="outline-btn small-margin">
+                    <option value="5">5 segundos</option>
+                    <option value="10" selected>10 segundos</option>
+                    <option value="30">30 segundos</option>
+                </select>
+                
+                <div id="lista-contatos-config" class="saved-contacts-list">
+                    <!-- Contatos serão carregados aqui via JS -->
+                </div>
 
-        <!-- 3. Ajustes de Segurança (Emergência) -->
-        <section class="setting-group">
-            <h2>Segurança e emergência</h2>
+                <button class="solid-btn" onclick="abrirModalContato()">+ Adicionar contato de emergência</button>
+            </div>
+        </div>
 
-            <!-- Tempo de contagem regressiva -->
-            <h3>Tempo para cancelar emergência</h3>
-            <p>Defina quanto tempo terá para cancelar um alarme antes de avisar aos seus contatos.</p>
-            <select id="emergency-timer-select">
-                <option value="5">5 segundos</option>
-                <option value="10" selected>10 segundos</option>
-                <option value="30">30 segundos</option>
-            </select>
+    </div>
 
-            <!-- Mensagem personalizada -->
-            <h3>Mensagem de emergência</h3>
-            <p>Texto que será enviado aos contatos (WhatsApp).</p>
-            <textarea id="emergency-message" rows="3"
-                placeholder="Ex: Estou tendo um congelamento (freezing), venha me ajudar."></textarea>
-        </section>
-    </main>
-    <script src="configs.js"></script>
+    <!-- Modal Novo Contato -->
+    <div id="modal-contato" class="modal-overlay hidden">
+        <div class="modal-box contact-modal">
+            <div class="input-row">
+                <label>Nome:</label>
+                <input type="text" id="novo-nome" class="contact-input" />
+            </div>
+            <div class="input-row">
+                <label>Contato:</label>
+                <input type="text" id="novo-contato-tel" class="contact-input" />
+            </div>
+            <div class="contact-buttons">
+                <!-- Check Verde -->
+                <button class="square-btn green-sq" onclick="salvarContato()">
+                    <img src="assets/img/icone_check.png" alt="Save" width="24" height="24">
+                </button>
+                <!-- X Vermelho -->
+                <button class="square-btn red-sq" onclick="fecharModalContato()">
+                    <img src="assets/img/icone_x.png" alt="Cancel" width="24" height="24">
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/configs.js"></script>
 </body>
-
 </html>

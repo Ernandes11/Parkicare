@@ -15,13 +15,10 @@ if (form) {
         event.preventDefault();
 
         const nome = document.getElementById('nome').value;
-        const dataInicio = document.getElementById('dataInicio').value;
         const horario = document.getElementById('horario').value;
-        const intervalo = document.getElementById('intervalo').value;
         const dosagem = document.getElementById('dosagem').value;
-        const unidade = document.getElementById('unidade').value;
 
-        if (!nome || !dataInicio || !horario || !dosagem) {
+        if (!nome || !horario || !dosagem) {
             alert('Por favor, preencha todos os campos obrigatórios.');
             return;
         }
@@ -41,9 +38,9 @@ if (form) {
                 user_id: user.id,
                 nome: nome,
                 horario: horario,
-                intervalo: parseInt(intervalo) || 0,
+                intervalo: 0,
                 dosagem: dosagem,
-                unidade: unidade,
+                unidade: 'mg',
                 tomado: false
             });
 

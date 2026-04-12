@@ -5,66 +5,68 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Crie sua conta</title>
-  <link rel="stylesheet" href="telacadastro.css">
-  <link rel="stylesheet" href="accessibility.css">
+  <link rel="stylesheet" href="css/telacadastro.css">
+  <link rel="stylesheet" href="css/accessibility.css">
+  <script src="js/accessibility-loader.js"></script>
 </head>
 
 <body>
   <div class="container">
     <div class="form-box">
-      <h1>Crie a sua conta</h1>
-      <p>Crie a sua conta para iniciarmos essa jornada!</p>
+      <h1 class="main-title">Cadastro</h1>
+      <p class="sub-title">Crie sua conta</p>
 
       <form id="registerForm" novalidate>
         <div class="input-group">
-          <input type="text" id="nome" name="nome" placeholder="Nome completo" required autocomplete="name">
-          <p class="error-text" id="nome-error" aria-live="polite"></p>
+          <label for="nome">Nome Completo</label>
+          <input type="text" id="nome" name="nome" placeholder="" required autocomplete="name">
+          <p class="error-text" id="nome-error"></p>
         </div>
 
         <div class="input-group">
-          <input type="email" id="email" name="email" placeholder="Email" required autocomplete="email">
-          <p class="error-text" id="email-error" aria-live="polite"></p>
-        </div>
-
-        <div class="password-field input-group">
-          <input type="password" id="senha" name="senha" placeholder="Senha" required autocomplete="new-password">
-          <p class="error-text" id="senha-error" aria-live="polite"></p>
-        </div>
-
-        <!-- Confirmar senha -->
-        <div class="password-field input-group">
-          <input type="password" id="confirmar_senha" name="confirmar_senha" placeholder="Confirmar senha" required
-            autocomplete="new-password">
-          <p class="error-text" id="confirmar-senha-error" aria-live="polite"></p>
+          <label for="whatsapp">Contatos de Emergência</label>
+          <input type="tel" id="whatsapp" name="whatsapp" placeholder="Nome e telefone" required autocomplete="tel">
+          <p class="error-text" id="whatsapp-error"></p>
         </div>
 
         <div class="input-group">
-          <input type="tel" id="whatsapp" name="whatsapp" placeholder="Número de emergência (Whatsapp)" required
-            autocomplete="tel" pattern="[0-9]{10,11}" title="O número deve ter 10 ou 11 dígitos, apenas números.">
-          <p class="error-text" id="whatsapp-error" aria-live="polite"></p>
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="" required autocomplete="email">
+          <p class="error-text" id="email-error"></p>
         </div>
 
-        <!-- Segundo número de emergência -->
         <div class="input-group">
-          <input type="tel" id="whatsapp2" name="whatsapp2" placeholder="Segundo número de emergência (Opcional)"
-            autocomplete="tel" pattern="[0-9]{10,11}" title="O número deve ter 10 ou 11 dígitos, apenas números.">
-          <p class="error-text" id="whatsapp2-error" aria-live="polite"></p>
+          <label for="senha">Senha</label>
+          <div class="pill-input-wrapper">
+            <input type="password" id="senha" name="senha" placeholder="" required autocomplete="new-password">
+            <div class="eye-toggle" id="toggleSenha"></div>
+          </div>
+          <p class="error-text" id="senha-error"></p>
         </div>
 
-        <button type="submit">Vamos começar!</button>
+        <div class="input-group">
+          <label for="confirmar_senha">Confirmar Senha</label>
+          <div class="pill-input-wrapper">
+            <input type="password" id="confirmar_senha" name="confirmar_senha" placeholder="" required autocomplete="new-password">
+            <div class="eye-toggle" id="toggleConfirmarSenha"></div>
+          </div>
+          <p class="error-text" id="confirmar-senha-error"></p>
+        </div>
 
-        <p style="text-align: center; margin-top: 15px; font-size: 14px;">
-          Já tem uma conta? <a href="telalogin.html"
-            style="color: #6C63FF; text-decoration: none; font-weight: bold;">Entre aqui</a>
-        </p>
+        <div class="form-footer">
+          <button type="submit" class="btn-primary">Criar Conta</button>
+          <p class="login-link">
+            Já tem uma conta? <a href="telalogin.html">Entre aqui</a>
+          </p>
+        </div>
       </form>
     </div>
   </div>
 
   <!-- Supabase & Client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase-client.js"></script>
-  <script src="telacadastro.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/telacadastro.js"></script>
 </body>
 
 </html>

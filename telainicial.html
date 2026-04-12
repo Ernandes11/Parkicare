@@ -5,8 +5,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ParkiCare</title>
-  <link rel="stylesheet" href="telaininicial.css" />
-  <link rel="stylesheet" href="accessibility.css" />
+  <link rel="stylesheet" href="css/telaininicial.css" />
+  <link rel="stylesheet" href="css/accessibility.css" />
+  <script src="js/accessibility-loader.js"></script>
 </head>
 
 <body>
@@ -15,7 +16,7 @@
     <!-- Cabeçalho -->
     <div class="header-top">
       <div class="logo">
-        <img src="logoParkicare.png" alt="logo">
+        <img src="assets/img/logoParkicare.png" alt="logo">
         <div>
           <h1>ParkiCare</h1>
           <p class="subtitle">Pequenos passos, grandes cuidados.</p>
@@ -23,20 +24,22 @@
       </div>
 
       <button class="btn-config" onclick="window.location.href='configs.html'">
-        <img src="icone_config.png" alt="Configurações">
+        <img src="assets/img/tres-pontos.png" alt="Configurações">
       </button>
     </div>
 
-    <!-- Botão de Emergência -->
-    <button class="btn-emergency" onclick="irPara('emergencia.html')">
-      Botão de Emergência
-    </button>
+    <!-- Botão de Emergência Pill -->
+    <div class="emergency-container-top">
+        <button class="btn-emergency-pill" onclick="abrirEmergencia()">
+          Botão de emergência
+        </button>
+    </div>
 
     <!-- Medicamentos -->
-    <h2 class="section-title">Medicamentos agendados:</h2>
+    <h2 class="section-title-alt">Medicamentos de Hoje:</h2>
 
-    <div id="lista-medicamentos">
-      <!-- Medicamentos serão inseridos aqui via Javascript -->
+    <div id="lista-medicamentos" class="new-med-list">
+      <!-- Medicamentos serão inseridos aqui via Javascript no novo formato -->
     </div>
 
     <!-- Modal Detalhes -->
@@ -45,8 +48,7 @@
         <h2 id="detail-nome">Nome do Medicamento</h2>
         <p id="detail-info">Detalhes...</p>
         <div class="modal-actions">
-          <button id="btn-toggle-status" class="btn-success" onclick="alternarStatusDetalhe()">Marcar como
-            tomado</button>
+          <button id="btn-toggle-status" class="btn-success" onclick="alternarStatusDetalhe()">Marcar como tomado</button>
           <button class="btn-danger" onclick="excluirMedicamento()">Excluir medicação</button>
         </div>
         <button class="btn-exit" onclick="fecharDetalhes()">Sair</button>
@@ -56,63 +58,55 @@
     <!-- Modal Emergência -->
     <div id="emergency-modal" class="modal-overlay hidden">
       <div class="modal-content emergency-content">
-        <div class="emergency-icon-container">
-          <img src="sirene.png" alt="Sirene" class="siren-icon">
+        <div class="emergency-header">
+          <img src="assets/img/alerta.png" alt="Emergência" class="emergency-main-icon">
+          <h2>Emergência</h2>
         </div>
-        <h2>Confirmar emergência?</h2>
-
-        <p class="emergency-text">
-          Uma notificação será enviada a seu(s)<br>contato(s) de emergência
-        </p>
-
-        <p class="contacts-label-centered">Contatos que receberão a notificação:</p>
-
-        <div class="contact-list-clean">
-          <div class="contact-item">
-            <strong>Mãe</strong>
-            <small>Parentesco; (11) 99999-9999</small>
-          </div>
-
-          <div class="contact-item">
-            <strong>Pai</strong>
-            <small>Parentesco; (11) 98888-8888</small>
-          </div>
+        <p class="emergency-description">Uma notificação será enviada a seu(s) contato(s) de emergência</p>
+        <div id="badge-contatos-emergencia" class="badge-container"></div>
+        <div class="emergency-footer">
+            <button id="btn-cancel-emergency" class="btn-cancel-pill" onclick="cancelarEmergencia()">(10s) Cancelar</button>
         </div>
-
-        <button id="btn-cancel-emergency" class="btn-cancel-grey" onclick="cancelarEmergencia()">(10s) cancelar</button>
       </div>
     </div>
 
-    <!-- Menu inferior -->
-    <div class="menu">
-      <button class="menu-btn" onclick="irPara('teste.tremores.html')">
-        <img src="icone_tremores_novo.png" alt="logo">
-        <span>Teste de Tremores</span>
-      </button>
+    <!-- Novas Áreas de Ação (Cards Inferiores) -->
+    <div class="action-cards-container">
+      <div class="action-card meds-card" onclick="irPara('telamedicamento.html')">
+        <div class="card-info">
+            <h3>Medicamentos</h3>
+            <p>Gerenciar e acompanhar</p>
+        </div>
+        <img src="assets/img/medicamento (1).png" alt="Pill" class="card-icon">
+      </div>
 
-      <button class="menu-btn" onclick="irPara('telamedicamento.html')">
-        <img src="icone_medicamentos_novo.png" alt="logo">
-        <span>Medicamentos</span>
-      </button>
+      <div class="action-card tests-card" onclick="irPara('teste.tremores.html')">
+        <div class="card-info">
+            <h3>Testes de Coodernação</h3>
+            <p>Avaliar habilidades motoras</p>
+        </div>
+        <img src="assets/img/aprovacao.png" alt="Doc" class="card-icon">
+      </div>
     </div>
   </div>
 
   <!-- Modal de Notificação -->
   <div id="notification-modal" class="modal-overlay hidden">
     <div class="modal-content notification-content">
-      <div class="notification-bell">
-        <img src="sino.png" alt="Sino de notificação">
+      <div class="notification-header">
+        <div class="notification-bell">
+          <img src="assets/img/sino-de-notificacao.png" alt="Sino de notificação">
+        </div>
+        <h2 class="notification-title">Hora da medicação!</h2>
       </div>
-      <h2 class="notification-title">Está na hora do<br>seu remédio.</h2>
-      <p class="notification-text">Se o tempo da contagem terminar e você não tocar em "Ok", o remédio será registrado
-        como "atrasado".</p>
-      <button class="notification-button" onclick="confirmarTomada()">Ok (10s)</button>
+      <p class="notification-text">Confirme o lembrete agora. Caso contrário, o medicamento será marcado como atrasado.</p>
+      <button class="notification-button" onclick="confirmarTomada()">Confirmar (10s)</button>
     </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase-client.js"></script>
-  <script src="telainicial.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/telainicial.js"></script>
 </body>
 
 </html>

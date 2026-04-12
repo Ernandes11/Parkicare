@@ -6,21 +6,27 @@ let notificationTimeout = null;
 const alertedMeds = new Set();
 let currentDetailId = null;
 let currentUser = null;
+let currentAlarmAudio = null; // Store audio reference to stop it later
 
 // Sound
 function playSound() {
     try {
-        // Get selected sound from settings, default to 'padrao'
+        // Stop any existing sound before playing new one
+        if (currentAlarmAudio) {
+            currentAlarmAudio.pause();
+            currentAlarmAudio.currentTime = 0;
+        }
+
         const savedSound = localStorage.getItem('parkicare_alarmSound');
         const soundName = savedSound ? JSON.parse(savedSound) : 'padrao';
 
-        const audio = new Audio(`${soundName}.mp3`);
-        audio.play().catch(e => console.error("Error playing alarm sound:", e));
+        currentAlarmAudio = new Audio(`assets/audio/${soundName}.mp3`);
+        currentAlarmAudio.loop = true; // Optional: keep playing until action
+        currentAlarmAudio.play().catch(e => console.error("Error playing alarm sound:", e));
 
-        // Vibration fallback (if supported and enabled)
         const alertType = JSON.parse(localStorage.getItem('parkicare_alertType') || '"sound-vibration"');
         if (alertType !== 'sound-only' && navigator.vibrate) {
-            navigator.vibrate([200, 100, 200]);
+            navigator.vibrate([400, 200, 400]);
         }
     } catch (e) {
         console.error("Audio play failed", e);
@@ -111,33 +117,35 @@ async function renderMedicamentos() {
 
         let cardClass = 'med-card';
         let statusText = '';
+        let statusClass = '';
 
         if (med.tomado) {
-            cardClass += ' green';
-            statusText = '<span style="color: #2ecc71;">Tomado</span>';
+            statusText = 'Tomado';
+            statusClass = 'tomado';
         } else if (isLate) {
-            cardClass += ' red';
-            statusText = 'atrasado';
+            statusText = 'Atrasado';
+            statusClass = 'atrasado';
         } else {
-            cardClass += ' neutral';
+            statusText = 'Pendente';
+            statusClass = ''; // Default/Neutral
         }
 
         const div = document.createElement('div');
-        div.className = cardClass;
+        div.className = 'new-med-card';
         div.style.animationDelay = `${index * 0.1}s`;
-
-        if (!med.tomado && !isLate) {
-            div.style.borderLeftColor = '#3498db';
-        }
 
         div.onclick = () => abrirDetalhes(med.id);
 
         div.innerHTML = `
-            <div class="med-info">
-                ${med.nome}<br><small>${med.dosagem}${med.unidade || ''}</small>
+            <div class="new-med-time">
+                ${med.horario}
             </div>
-            <div class="med-time">
-                ${med.horario}<br><small>${statusText}</small>
+            <div class="new-med-info">
+                <h4>${med.nome}</h4>
+                <p>${med.dosagem}${med.unidade || ''}</p>
+            </div>
+            <div class="status-badge ${statusClass}">
+                ${statusText}
             </div>
         `;
         lista.appendChild(div);
@@ -301,7 +309,7 @@ function showModal() {
 
         let countdown = 10;
         if (button) {
-            button.textContent = `Ok (${countdown}s)`;
+            button.textContent = `Confirmar (${countdown}s)`;
         }
 
         if (notificationTimeout) clearTimeout(notificationTimeout);
@@ -310,7 +318,7 @@ function showModal() {
         const countdownInterval = setInterval(() => {
             countdown--;
             if (button && countdown > 0) {
-                button.textContent = `Ok (${countdown}s)`;
+                button.textContent = `Confirmar (${countdown}s)`;
             }
         }, 1000);
 
@@ -339,6 +347,14 @@ function closeModal() {
     if (modal) {
         modal.classList.add('hidden');
     }
+
+    // STOP the music!
+    if (currentAlarmAudio) {
+        currentAlarmAudio.pause();
+        currentAlarmAudio.currentTime = 0;
+        currentAlarmAudio = null;
+    }
+
     if (notificationTimeout) {
         clearTimeout(notificationTimeout);
         notificationTimeout = null;
@@ -406,9 +422,10 @@ function abrirEmergencia() {
     const savedTime = localStorage.getItem('parkicare_emergencyTimer');
     emergencySeconds = savedTime ? parseInt(JSON.parse(savedTime)) : 10;
     const btn = document.getElementById('btn-cancel-emergency');
-    btn.innerText = `(${emergencySeconds}s) cancelar`;
+    if (btn) btn.innerText = `(${emergencySeconds}s) Cancelar`;
 
     modal.classList.remove('hidden');
+    renderEmergencyContacts(); // Refresh list on open
 
     if (emergencyInterval) clearInterval(emergencyInterval);
 
@@ -418,7 +435,7 @@ function abrirEmergencia() {
             clearInterval(emergencyInterval);
             enviarEmergencia();
         } else {
-            btn.innerText = `(${emergencySeconds}s) cancelar`;
+            if (btn) btn.innerText = `(${emergencySeconds}s) Cancelar`;
         }
     }, 1000);
 }
@@ -434,33 +451,39 @@ function cancelarEmergencia() {
 // ---------------------------------------------------------
 
 function renderEmergencyContacts() {
-    if (!currentUser || !currentUser.user_metadata) return;
+    if (!currentUser) return;
 
-    const meta = currentUser.user_metadata;
-    const container = document.querySelector('.contact-list-clean');
+    const meta = currentUser.user_metadata || {};
+    const container = document.getElementById('badge-contatos-emergencia');
     if (!container) return;
 
     container.innerHTML = '';
 
     // Contact 1
     if (meta.whatsapp) {
-        container.innerHTML += `
-           <div class="contact-item">
-            <strong>Contato 1</strong>
-            <small>${meta.whatsapp}</small>
-          </div>
-        `;
+        const nome = meta.nome_contato || 'Contato 1';
+        container.innerHTML += `<div class="contact-badge">${nome}: ${formatarTel(meta.whatsapp)}</div>`;
     }
 
     // Contact 2
     if (meta.whatsapp2) {
-        container.innerHTML += `
-           <div class="contact-item">
-            <strong>Contato 2</strong>
-            <small>${meta.whatsapp2}</small>
-          </div>
-        `;
+        const nome2 = meta.nome_contato2 || 'Contato 2';
+        container.innerHTML += `<div class="contact-badge">${nome2}: ${formatarTel(meta.whatsapp2)}</div>`;
     }
+
+    if (!meta.whatsapp && !meta.whatsapp2) {
+        container.innerHTML = '<p style="color:red">Nenhum contato configurado!</p>';
+    }
+}
+
+function formatarTel(tel) {
+    if (!tel) return '';
+    let t = tel.replace(/\D/g, '');
+    if (t.startsWith('55')) t = t.substring(2);
+    if (t.length === 11) {
+        return `+55 ${t.substring(0, 2)} ${t.substring(2, 7)}-${t.substring(7)}`;
+    }
+    return tel;
 }
 
 function enviarEmergencia() {
@@ -472,37 +495,24 @@ function enviarEmergencia() {
     }
 
     const meta = currentUser.user_metadata;
-
-    // Get custom message or default
-    const savedMsg = localStorage.getItem('parkicare_emergencyMessage');
-    let message = "SOCORRO! Preciso de ajuda urgente!";
-    if (savedMsg) {
-        try {
-            const parsed = JSON.parse(savedMsg);
-            if (parsed && parsed.trim() !== "") message = parsed;
-        } catch (e) {
-            console.error("Error parsing saved message", e);
-        }
-    }
+    const message = "SOCORRO! Preciso de ajuda urgente!";
     const encodedMsg = encodeURIComponent(message);
 
-    // Prioritize Contact 1
-    if (meta.whatsapp) {
-        const url1 = `https://wa.me/55${meta.whatsapp}?text=${encodedMsg}`; // Assuming BR code 55 for simplicity
-        window.open(url1, '_blank');
-    }
+    const contatos = [];
+    if (meta.whatsapp) contatos.push(meta.whatsapp);
+    if (meta.whatsapp2) contatos.push(meta.whatsapp2);
 
-    // Process Contact 2 (Browser might block specific popup, but we try)
-    if (meta.whatsapp2) {
-        setTimeout(() => {
-            const url2 = `https://wa.me/55${meta.whatsapp2}?text=${encodedMsg}`;
-            window.open(url2, '_blank');
-        }, 1000);
-    }
-
-    // Fallback if no contacts
-    if (!meta.whatsapp && !meta.whatsapp2) {
+    if (contatos.length === 0) {
         const url = `https://wa.me/?text=${encodedMsg}`;
         window.open(url, '_blank');
+        return;
     }
+
+    contatos.forEach((tel, index) => {
+        setTimeout(() => {
+            const cleanNum = tel.replace(/\D/g, '');
+            const url = `https://wa.me/${cleanNum}?text=${encodedMsg}`;
+            window.open(url, '_blank');
+        }, index * 1000); // Small delay to help browsers allow multiple popups
+    });
 }
