@@ -4,7 +4,9 @@ body {
 }
 
 .container {
-    max-width: 450px;
+  min-height: 100vh;
+  box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    max-width: 414px;
     /* Adjusted for typical mobile width reference */
     aspect-ratio: 9/16;
     margin: 10px auto;

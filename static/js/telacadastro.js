@@ -18,6 +18,41 @@ function setupToggle(toggle, input) {
 setupToggle(toggleSenha, senha);
 setupToggle(toggleConfirmarSenha, confirmarSenhaInput);
 
+// Handle second contact addition
+const btnAddContact = document.getElementById('btn-add-contact');
+const contactsContainer = document.getElementById('contacts-container');
+let contactCount = 1;
+
+if (btnAddContact && contactsContainer) {
+    btnAddContact.addEventListener('click', () => {
+        if (contactCount >= 2) {
+            alert('Você já adicionou o limite máximo de contatos (2).');
+            return;
+        }
+
+        const secondCard = document.createElement('div');
+        secondCard.className = 'contact-card';
+        secondCard.innerHTML = `
+            <div class="input-group">
+                <label for="nome_contato2">Nome do Contato 2</label>
+                <input type="text" id="nome_contato2" name="nome_contato2" placeholder="Nome da 2ª pessoa de contato" autocomplete="off">
+                <p class="error-text" id="nome-contato2-error"></p>
+            </div>
+
+            <div class="input-group">
+                <label for="whatsapp2">Telefone do Contato 2</label>
+                <input type="tel" id="whatsapp2" name="whatsapp2" placeholder="(00) 00000-0000" autocomplete="tel">
+                <p class="error-text" id="whatsapp2-error"></p>
+            </div>
+        `;
+        contactsContainer.appendChild(secondCard);
+        contactCount++;
+        
+        // Hide button since we only support 2 contacts in the DB right now
+        btnAddContact.style.display = 'none';
+    });
+}
+
 if (form) {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -34,6 +69,8 @@ if (form) {
     const whatsapp = document.getElementById('whatsapp').value.trim();
     const whatsapp2Elem = document.getElementById('whatsapp2');
     const whatsapp2 = whatsapp2Elem ? whatsapp2Elem.value.trim() : '';
+    const nomeContato2Elem = document.getElementById('nome_contato2');
+    const nomeContato2 = nomeContato2Elem ? nomeContato2Elem.value.trim() : '';
 
     let hasError = false;
     const showError = (fieldId, message) => {
@@ -68,8 +105,8 @@ if (form) {
           senha: senhaValor,
           nome_contato: nomeContato,
           whatsapp,
-          whatsapp2,
-          nome_contato2: ''
+          whatsapp2: whatsapp2,
+          nome_contato2: nomeContato2
         })
       });
 

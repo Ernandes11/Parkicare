@@ -16,6 +16,8 @@ body {
 }
 
 .container {
+  min-height: 100vh;
+  box-shadow: 0 0 20px rgba(0,0,0,0.05);
   width: 360px; /* proporção tipo celular (9:16) */
   height: 640px;
   background-color: #fffde8;

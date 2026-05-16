@@ -13,38 +13,25 @@
 <body>
   <div class="container">
     <div class="form-box">
-      <h1 class="main-title">Cadastro</h1>
-      <p class="sub-title">Crie sua conta</p>
+      <h1 class="main-title">Criar nova conta</h1>
 
       <form id="registerForm" novalidate>
         <div class="input-group">
           <label for="nome">Nome Completo</label>
-          <input type="text" id="nome" name="nome" placeholder="" required autocomplete="name">
+          <input type="text" id="nome" name="nome" placeholder="Seu nome completo" required autocomplete="name">
           <p class="error-text" id="nome-error"></p>
         </div>
 
         <div class="input-group">
-          <label for="nome_contato">Nome do Contato de Emergência</label>
-          <input type="text" id="nome_contato" name="nome_contato" placeholder="Ex: Maria Silva" required autocomplete="off">
-          <p class="error-text" id="nome-contato-error"></p>
-        </div>
-
-        <div class="input-group">
-          <label for="whatsapp">Telefone do Contato (DDD + Número)</label>
-          <input type="tel" id="whatsapp" name="whatsapp" placeholder="Ex: 11999999999" required autocomplete="tel">
-          <p class="error-text" id="whatsapp-error"></p>
-        </div>
-
-        <div class="input-group">
           <label for="email">Email</label>
-          <input type="email" id="email" name="email" placeholder="" required autocomplete="email">
+          <input type="email" id="email" name="email" placeholder="seu@email.com" required autocomplete="email">
           <p class="error-text" id="email-error"></p>
         </div>
 
         <div class="input-group">
           <label for="senha">Senha</label>
           <div class="pill-input-wrapper">
-            <input type="password" id="senha" name="senha" placeholder="" required autocomplete="new-password">
+            <input type="password" id="senha" name="senha" placeholder="••••••••" required autocomplete="new-password">
             <div class="eye-toggle" id="toggleSenha"></div>
           </div>
           <p class="error-text" id="senha-error"></p>
@@ -53,23 +40,49 @@
         <div class="input-group">
           <label for="confirmar_senha">Confirmar Senha</label>
           <div class="pill-input-wrapper">
-            <input type="password" id="confirmar_senha" name="confirmar_senha" placeholder="" required autocomplete="new-password">
+            <input type="password" id="confirmar_senha" name="confirmar_senha" placeholder="••••••••" required autocomplete="new-password">
             <div class="eye-toggle" id="toggleConfirmarSenha"></div>
           </div>
           <p class="error-text" id="confirmar-senha-error"></p>
         </div>
 
+        <div class="contacts-header">
+            <h2>Contatos de Emergência</h2>
+            <button type="button" class="btn-add-contact" id="btn-add-contact">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Adicionar
+            </button>
+        </div>
+
+        <div id="contacts-container">
+          <div class="contact-card">
+              <div class="input-group">
+                  <label for="nome_contato">Nome do Contato</label>
+                  <input type="text" id="nome_contato" name="nome_contato" placeholder="Nome da pessoa de contato" required autocomplete="off">
+                  <p class="error-text" id="nome-contato-error"></p>
+              </div>
+
+              <div class="input-group">
+                  <label for="whatsapp">Telefone do Contato</label>
+                  <input type="tel" id="whatsapp" name="whatsapp" placeholder="(00) 00000-0000" required autocomplete="tel">
+                  <p class="error-text" id="whatsapp-error"></p>
+              </div>
+          </div>
+        </div>
+
         <div class="form-footer">
-          <button type="submit" class="btn-primary">Criar Conta</button>
+          <button type="submit" class="btn-primary">Cadastrar</button>
           <p class="login-link">
-            Já tem uma conta? <a href="/login">Entre aqui</a>
+            <a href="/login">Já tem conta? Faça login</a>
           </p>
         </div>
       </form>
     </div>
   </div>
 
-  
   <script src="/static/js/telacadastro.js"></script>
 </body>
 

@@ -1,44 +1,206 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ParkiCare - Introdução</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ParkiCare - Onboarding</title>
     <link rel="stylesheet" href="/static/css/telaproxima.css">
     <link rel="stylesheet" href="/static/css/accessibility.css">
     <script src="/static/js/accessibility-loader.js"></script>
 </head>
-
 <body>
 
-    <div class="card">
-        <div class="header">
-            <span class="tulip-icon"></span>
+    <div class="container">
+        
+        <div class="carousel-track" id="carousel-track">
+            
+            <!-- SLIDE 1 -->
+            <div class="slide active">
+                <div class="user-icon-wrapper">
+                    <img src="/static/img/logoParkicare.png" alt="Logo ParkiCare" style="width: 65px; height: auto;">
+                </div>
+
+                <h1 class="welcome-title">Bem-vindo ao ParkiCare</h1>
+                <p class="welcome-subtitle">Sua saúde em boas mãos</p>
+                <p class="welcome-desc">
+                    Uma aplicação especialmente desenvolvida para acompanhar sua rotina medicamentosa e sua saúde com Parkinson.
+                </p>
+
+                <div class="summary-card">
+                    <div class="icons-row">
+                        <div class="icon-box green">
+                            <img src="/static/img/icone_medicamentos_novo.png" alt="Medicamentos" width="24" height="24" style="object-fit: contain; filter: brightness(0) invert(1);">
+                        </div>
+                        <div class="icon-box green">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                            </svg>
+                        </div>
+                        <div class="icon-box red">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="8" x2="12" y2="12"></line>
+                                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="icon-labels">
+                        Medicamentos • Coordenação • Emergência
+                    </div>
+                </div>
+
+                <div class="bottom-controls">
+                    <button class="btn btn-primary" onclick="nextSlide(1)">Continuar</button>
+                    <div class="pagination">
+                        <div class="dot active"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 2 -->
+            <div class="slide">
+                <div class="feature-list">
+                    <div class="feature-card">
+                        <div class="feature-icon green">
+                            <img src="/static/img/icone_medicamentos_novo.png" alt="Medicamentos" width="24" height="24" style="object-fit: contain; filter: brightness(0) invert(1);">
+                        </div>
+                        <div class="feature-text">
+                            <h3>Controle de Medicamentos</h3>
+                            <p>Registro automático de doses, horários programados e lembretes personalizados para nunca esquecer uma medicação.</p>
+                        </div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon green">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                            </svg>
+                        </div>
+                        <div class="feature-text">
+                            <h3>Testes de Coordenação</h3>
+                            <p>Exercícios motores para avaliar sua mobilidade e acompanhar sua evolução ao longo do tempo.</p>
+                        </div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon red">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="8" x2="12" y2="12"></line>
+                                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                            </svg>
+                        </div>
+                        <div class="feature-text">
+                            <h3>Botão de Emergência</h3>
+                            <p>Acesso rápido para chamar ajuda, notificando família e cuidadores instantaneamente.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bottom-controls">
+                    <div class="btn-row">
+                        <button class="btn btn-secondary" onclick="nextSlide(0)">Voltar</button>
+                        <button class="btn btn-primary" onclick="nextSlide(2)">Continuar</button>
+                    </div>
+                    <div class="pagination">
+                        <div class="dot"></div>
+                        <div class="dot active"></div>
+                        <div class="dot"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 3 -->
+            <div class="slide">
+                <div class="feature-list">
+                    <div class="feature-card">
+                        <div class="feature-icon green">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                                <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+                            </svg>
+                        </div>
+                        <div class="feature-text">
+                            <h3>Sobre o Projeto</h3>
+                            <p>Projeto desenvolvido por alunos do 4º ano de Informática do IFRN Campus Apodi, aplicando na prática os conhecimentos adquiridos no curso técnico.</p>
+                        </div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon green">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </div>
+                        <div class="feature-text">
+                            <h3>Design Acessível</h3>
+                            <p>Interface intuitiva e fácil de usar para todas as idades.</p>
+                        </div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon green">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                        </div>
+                        <div class="feature-text">
+                            <h3>Suporte da Família</h3>
+                            <p>Compartilhe atualizações com cuidadores e profissionais.</p>
+                        </div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon green">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                            </svg>
+                        </div>
+                        <div class="feature-text">
+                            <h3>Resposta Rápida</h3>
+                            <p>Feedback instantâneo em todas as interações do app.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bottom-controls">
+                    <div class="btn-row">
+                        <button class="btn btn-secondary" onclick="nextSlide(1)">Voltar</button>
+                        <button class="btn btn-primary" onclick="window.location.href='/inicial'">Começar</button>
+                    </div>
+                    <div class="pagination">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot active"></div>
+                    </div>
+                </div>
+            </div>
+
         </div>
-
-        <h1 class="logo-parkicare">Care</h1>
-
-        <p class="description">
-            Com o <strong class="parkicare-highlight">ParkiCare</strong>, portadores de Parkinson têm mais autonomia no
-            dia a dia, com lembretes de remédios, tarefas e avisos de segurança para familiares.
-        </p>
-
-        <ul class="features-list">
-            <li><span class="bullet"></span> Teste de tremores</li>
-            <li><span class="bullet"></span> Monitoramento de medicações</li>
-            <li><span class="bullet"></span> Alerta de emergência para familiares</li>
-        </ul>
-
-        <div class="button-container">
-            <a href="/inicial" class="next-button">
-                Próximo <span class="arrow-icon">&rarr;</span>
-            </a>
-        </div>
-
-        <div class="bottom-wave"></div>
     </div>
 
-</body>
+    <script>
+        function nextSlide(index) {
+            const track = document.getElementById('carousel-track');
+            // Move 100% left for each slide index (0, 1, or 2)
+            track.style.transform = `translateX(-${index * 100}%)`;
+            
+            // Toggle active class on slides to trigger fluid animations
+            const slides = document.querySelectorAll('.slide');
+            slides.forEach((slide, i) => {
+                if (i === index) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+        }
+    </script>
 
+</body>
 </html>

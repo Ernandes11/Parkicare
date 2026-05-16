@@ -14,7 +14,7 @@ body.configs-page-bg {
     display: flex;
     flex-direction: column;
     gap: 20px;
-    max-width: 500px;
+    max-width: 414px;
     margin: 0 auto;
     align-items: center;
 }

@@ -1,205 +1,279 @@
-/* Importação de fontes (opcional, mas para um visual mais limpo) */
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+/* telaproxima.css - Carousel Onboarding */
 
-:root {
-    /* Definição de cores base */
-    --color-green-dark: #4CAF50;
-    /* Verde escuro para o botão */
-    --color-green-light: #fcfeea;
-    /* Verde claro para o fundo do card (se necessário) */
-    --color-text-dark: #49943a;
-    --color-text-highlight: #E55C3A;
-    /* Laranja/Vermelho para "ParkiCare" no texto */
-    --color-orange-bullet: #E55C3A;
-    /* Laranja para os bullets e o nome "ParkiCare" principal */
-    /* --color-background-wave: #63AE63; Este não será mais usado diretamente para a onda */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    /* Remove tap highlight on mobile */
+    -webkit-tap-highlight-color: transparent;
 }
 
 body {
-    font-family: 'Roboto', sans-serif;
-    background-color: #f4f4f4;
-    /* Fundo geral da página */
+    background-color: #fdfdf9;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    margin: 0;
 }
 
-.card {
-    width: 300px;
-    /* Largura do cartão, similar a um app mobile */
-    min-height: 500px;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    padding: 20px;
+/* Mobile Container */
+.container {
+    width: 100%;
+    max-width: 414px;
+    height: 100vh;
+    max-height: 100vh; /* Prevent scrolling the whole body if possible */
+    background: #fdfdf9;
     position: relative;
-    /* Para posicionar a onda e o botão */
-    overflow: hidden;
-    /* Garante que a onda e o texto fiquem dentro do card */
+    overflow: hidden; /* Hide slides that are out of view */
+    box-shadow: 0 0 20px rgba(0,0,0,0.05);
     display: flex;
     flex-direction: column;
 }
 
-/* --- Cabeçalho e Ícone --- */
-.header {
+/* Carousel Track */
+.carousel-track {
     display: flex;
-    justify-content: flex-end;
-    margin-bottom: 10px;
+    width: 100%; 
+    height: 100%;
+    /* Springy, fluid easing instead of standard ease-in-out */
+    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); 
 }
 
-/* Espaço para a imagem do ícone da tulipa */
-.tulip-icon {
-    width: 40px;
-    /* Ajuste conforme o tamanho da sua imagem */
-    height: 40px;
-    /* Ajuste conforme o tamanho da sua imagem */
-    background-image: url('../img/logoParkicare.png');
-    /* **ANEXE AQUI O LINK DA IMAGEM DA TULIPA** */
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    display: block;
-    /* Para garantir que o width/height funcionem */
+/* Individual Slides */
+.slide {
+    flex: 0 0 100%; /* Exactly 100% of the container width */
+    width: 100%; 
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 40px 20px 30px 20px;
+    overflow-y: auto; /* Allow scrolling inside the slide if content is long */
+    
+    /* Transition states for active slide */
+    opacity: 0.4;
+    transform: scale(0.95);
+    transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-
-/* --- Logo --- */
-.logo-parkicare {
-    font-size: 32px;
-    font-weight: 700;
-    color: var(--color-orange-bullet);
-    margin: 0 0 20px 0;
-    line-height: 1.2;
+.slide.active {
+    opacity: 1;
+    transform: scale(1);
 }
 
-.logo-parkicare::before {
-    /* Para mudar a cor da parte "ParkiCare" (simulando a imagem) */
-    content: "Parki";
-    color: #E55C3A;
-    /* Vermelho/Laranja da imagem */
+/* Fun animations for cards inside active slide */
+.slide.active .summary-card,
+.slide.active .feature-card {
+    opacity: 0;
+    transform: translateY(30px);
+    animation: popIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 
-.logo-parkicare {
-    color: #4CAF50;
-    /* Verde da imagem */
+/* Staggering the cards so they pop in one after another */
+.slide.active .feature-card:nth-child(1) { animation-delay: 0.1s; }
+.slide.active .feature-card:nth-child(2) { animation-delay: 0.2s; }
+.slide.active .feature-card:nth-child(3) { animation-delay: 0.3s; }
+.slide.active .feature-card:nth-child(4) { animation-delay: 0.4s; }
+
+@keyframes popIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-/* --- Descrição --- */
-.description {
-    font-size: 16px;
-    color: var(--color-text-dark);
-    line-height: 1.5;
+/* --- Slide 1 Typography & Elements --- */
+.user-icon-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: -20px; /* Cut off effect like mockup */
+    margin-bottom: 30px;
+}
+.user-icon {
+    width: 70px;
+    height: 70px;
+    background-color: #71c09b;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.welcome-title {
+    font-size: 24px;
+    color: #1a2f3a;
+    text-align: center;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.welcome-subtitle {
+    font-size: 15px;
+    color: #f56a4e; /* Laranja ParkiCare */
+    text-align: center;
+    font-weight: 500;
     margin-bottom: 25px;
 }
 
-.parkicare-highlight {
-    color: var(--color-text-highlight);
-    font-weight: 700;
-    /* text-decoration: underline; */
-    /* Removido para ficar mais fiel à imagem original */
+.welcome-desc {
+    font-size: 14px; /* Reduced slightly for smaller screens */
+    color: #4a5c68;
+    text-align: center;
+    line-height: 1.5;
+    margin-bottom: 30px;
+    padding: 0 5px;
 }
 
-/* --- Lista de Funcionalidades --- */
-.features-list {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 40px 0;
-    flex-grow: 1;
-    /* Para empurrar o botão para baixo */
+/* Summary Card (Slide 1) */
+.summary-card {
+    background-color: white;
+    border-radius: 20px;
+    padding: 30px 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+    margin-bottom: auto; /* Push buttons to bottom */
 }
 
-.features-list li {
-    font-size: 17px;
-    color: #cb8926;
-    /* Cor do texto das funcionalidades, mais neutro */
-    margin-bottom: 15px;
+.icons-row {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.icon-box {
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.icon-box.green { background-color: #71c09b; }
+.icon-box.red { background-color: #c4422e; }
+
+.icon-labels {
+    font-size: 12px;
+    color: #888;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap; /* Allows wrapping on very small screens */
+    gap: 4px;
+    margin-top: 15px; /* Added spacing from icons */
+}
+
+/* --- Slides 2 & 3: Feature Cards --- */
+.feature-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: auto;
+}
+
+.feature-card {
+    background-color: white;
+    border-radius: 20px;
+    padding: 20px;
     display: flex;
     align-items: center;
-    /* Alinha o texto e o ícone verticalmente */
-    font-weight: 500;
+    gap: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.02);
 }
 
-/* Espaço para a imagem do bullet/estrela */
-.bullet {
-    width: 18px;
-    /* Ajuste conforme o tamanho da sua imagem */
-    height: 18px;
-    /* Ajuste conforme o tamanho da sua imagem */
-    background-image: url('../img/brilhar.png');
-    /* **ANEXE AQUI O LINK DA IMAGEM DA ESTRELINHA/BULLET** */
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    display: inline-block;
-    margin-right: 10px;
-    flex-shrink: 0;
-    /* Impede que o bullet encolha */
-}
-
-
-/* --- Botão Próximo --- */
-/* --- Botão Próximo --- */
-.button-container {
-    position: absolute;
-    /* Posição absoluta dentro do .card */
-    bottom: 170px;
-    /* Ajustado para subir mais o botão */
-    right: 30px;
-    /* Afastado da direita */
-    z-index: 10;
-    /* Garante que o botão fique acima da onda */
-}
-
-.next-button {
-    background-color: #63AE63;
-    /* Cor do botão, combinando com a onda */
-    color: #fff;
-    text-decoration: none;
-    padding: 12px 20px;
-    border-radius: 25px;
-    font-size: 16px;
-    font-weight: 700;
-    display: inline-flex;
+.feature-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 14px;
+    display: flex;
+    justify-content: center;
     align-items: center;
-    transition: background-color 0.3s;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+    flex-shrink: 0;
+}
+.feature-icon.green { background-color: #71c09b; }
+.feature-icon.red { background-color: #c4422e; }
+
+.feature-text h3 {
+    font-size: 15px;
+    color: #1a2f3a;
+    font-weight: 500;
+    margin-bottom: 5px;
 }
 
-.next-button:hover {
-    background-color: #5AA05A;
-    /* Um pouco mais escuro ao passar o mouse */
+.feature-text p {
+    font-size: 13px;
+    color: #666;
+    line-height: 1.4;
 }
 
 
-.arrow-icon {
-    font-size: 20px;
-    margin-left: 8px;
-    line-height: 1;
+/* --- Bottom Controls (Pagination & Buttons) --- */
+.bottom-controls {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%; /* Fix to make button expand */
+    gap: 20px;
 }
 
-/* --- Onda de Fundo Inferior como Imagem PNG --- */
-.bottom-wave {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
+.pagination {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background-color: #d8dde1;
+    transition: all 0.3s ease;
+}
+
+.dot.active {
+    width: 20px;
+    background-color: #71c09b;
+}
+
+/* Button Layouts */
+.btn-row {
+    display: flex;
     width: 100%;
-    height: 180px;
-    /* Ajuste a altura conforme a sua imagem PNG da onda */
-    background-image: url('../img/formaverde.png');
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: -20px bottom;
-    /* Move a imagem 50px para a esquerda */
-    z-index: 5;
-    border-radius: 0 0 10px 10px;
+    gap: 15px;
 }
 
+.btn {
+    width: 100%;
+    padding: 16px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    border: none;
+    transition: transform 0.1s, opacity 0.1s;
+}
 
-/* Ajusta o padding do card para que o conteúdo não seja escondido pela onda */
-.card {
-    padding-bottom: 100px;
-    /* Garante espaço para a onda e o botão */
+/* Touch feedback instead of hover */
+.btn:active {
+    transform: scale(0.98);
+    opacity: 0.9;
+}
+
+.btn-primary {
+    background-color: #71c09b;
+    color: white;
+}
+
+.btn-secondary {
+    background-color: #fdfdf9; /* Match background */
+    color: #1a2f3a;
+    border: 1px solid #d8dde1;
+}
+
+/* Utility flex to stretch secondary button logic */
+.btn-row .btn {
+    flex: 1;
 }
