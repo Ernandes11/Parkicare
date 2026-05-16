@@ -1,32 +1,254 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ParkiCare</title>
-  <link rel="stylesheet" href="/static/css/telaprimeira.css">
-  <link rel="stylesheet" href="/static/css/accessibility.css">
-  <script src="/static/js/accessibility-loader.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ParkiCare - Splash</title>
+    <style>
+        :root {
+            --parki-cream: #FFF9E6;
+            --parki-butter: #FAD97A;
+            --parki-leaf: #3FA34D;
+            --parki-leaf-deep: #2F7A3B;
+            --parki-coral: #E94F37;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+        body {
+            background-color: var(--parki-cream);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Mobile Container */
+        .mobile-frame {
+            width: 100%;
+            max-width: 414px;
+            height: 100vh;
+            position: relative;
+            background-color: var(--parki-cream);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* Floating Particles */
+        .particles {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.3;
+        }
+
+        /* Animation Sequence */
+        .intro-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+            z-index: 10;
+        }
+
+        .flower-stage {
+            width: 200px;
+            height: 200px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .seed {
+            width: 15px;
+            height: 15px;
+            background: var(--parki-coral);
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(0.8); opacity: 0.6; }
+            50% { transform: scale(1.2); opacity: 1; }
+        }
+
+        .flor-img {
+            display: none;
+            width: 120px;
+            height: auto;
+            opacity: 0;
+            transform: translateY(30px) scale(0.6);
+            transition: all 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .text-step {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--parki-leaf-deep);
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.5s ease;
+            text-align: center;
+        }
+
+        .text-step.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Welcome Card */
+        .welcome-card {
+            display: none;
+            background: #FFFFFF;
+            border-radius: 45px;
+            padding: 50px 35px;
+            width: 100%;
+            max-width: 360px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+            z-index: 20;
+            animation: cardAppear 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes cardAppear {
+            from { transform: translateY(40px) scale(0.9); opacity: 0; }
+            to { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        .card-logo {
+            width: 100px;
+            height: auto;
+            margin-bottom: 25px;
+            object-fit: contain;
+        }
+
+        .title { font-size: 2.2rem; font-weight: 800; margin-bottom: 12px; }
+        .title .parki { color: var(--parki-coral); }
+        .title .care { color: var(--parki-leaf-deep); }
+
+        .welcome-text { font-size: 1.3rem; font-weight: 600; color: #444; margin-bottom: 10px; }
+        .description { font-size: 0.95rem; color: #777; margin-bottom: 40px; line-height: 1.6; }
+
+        .btn-seguir {
+            background-color: var(--parki-coral);
+            color: white;
+            border: none;
+            padding: 20px;
+            width: 100%;
+            border-radius: 25px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 12px 24px rgba(233, 79, 55, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .btn-seguir:active { transform: scale(0.96); }
+
+        .btn-login {
+            background: none;
+            border: none;
+            color: #888;
+            margin-top: 20px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+    </style>
 </head>
-
 <body>
-  <div class="container">
-    <div class="logo-area">
-      <img src="/static/img/logoParkicare.png" alt="Logo ParkiCare" class="logo">
-      <h1 class="titulo"><span>Parki</span><span class="care">Care</span></h1>
+    <div class="mobile-frame">
+        <div class="particles" id="particles"></div>
+
+        <!-- Intro Section -->
+        <div class="intro-container" id="intro">
+            <div class="flower-stage">
+                <div class="seed" id="seed"></div>
+                <img src="/static/img/flor.png" class="flor-img" id="flor">
+            </div>
+            <p class="text-step" id="step-text">Tudo começa pequeno…</p>
+        </div>
+
+        <!-- Welcome Card -->
+        <div class="welcome-card" id="card">
+            <img src="/static/img/logoParkicare.png" class="card-logo">
+            <h1 class="title"><span class="parki">Parki</span><span class="care">Care</span></h1>
+            <h3 class="welcome-text">Bem-vindo!</h3>
+            <p class="description">Pequenos passos, grandes cuidados. O seu companheiro diário na jornada do bem-estar.</p>
+            
+            <button class="btn-seguir" onclick="window.location.href='/login'">Seguir</button>
+        </div>
     </div>
 
-    <div class="caixa-boasvindas">
-      <h2>Bem - Vindo!</h2>
-      <p>Pequenos passos, grandes cuidados.</p>
+    <script>
+        const texts = ["Tudo começa pequeno…", "…com cuidado, floresce.", "Um jardim de bem-estar."];
+        let step = 0;
 
-      <div class="botoes">
-        <button onclick="window.location.href='/login'">Login</button>
-        <button class="cadastro" onclick="window.location.href='/cadastro'">Cadastra-se</button>
-      </div>
-    </div>
-  </div>
+        function updateStep() {
+            const seed = document.getElementById('seed');
+            const flor = document.getElementById('flor');
+            const text = document.getElementById('step-text');
+
+            text.classList.remove('visible');
+
+            setTimeout(() => {
+                text.innerText = texts[step];
+                text.classList.add('visible');
+
+                if (step === 1) {
+                    seed.style.display = 'none';
+                    flor.style.display = 'block';
+                    setTimeout(() => {
+                        flor.style.opacity = '1';
+                        flor.style.transform = 'translateY(0) scale(1)';
+                    }, 50);
+                }
+
+                step++;
+                if (step < texts.length) {
+                    setTimeout(updateStep, 1800);
+                } else {
+                    setTimeout(showCard, 2200);
+                }
+            }, 500);
+        }
+
+        function showCard() {
+            document.getElementById('intro').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('intro').style.display = 'none';
+                document.getElementById('card').style.display = 'block';
+            }, 500);
+        }
+
+        // Background Particles
+        const partContainer = document.getElementById('particles');
+        const colors = ['#3FA34D', '#E94F37', '#FAD97A'];
+        for(let i=0; i<12; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            const size = Math.random() * 15 + 5;
+            p.style.width = size + 'px';
+            p.style.height = size + 'px';
+            p.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
+            p.style.left = Math.random() * 100 + '%';
+            p.style.top = Math.random() * 100 + '%';
+            partContainer.appendChild(p);
+        }
+
+        // Init
+        setTimeout(updateStep, 600);
+    </script>
 </body>
-
 </html>
