@@ -1,0 +1,300 @@
+/* telacuidador.css */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f0f7f4;
+  color: #2c3e35;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 414px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 20px rgba(0,0,0,0.05);
+}
+
+/* Header */
+.header {
+  background: linear-gradient(135deg, #45a081, #2f7a5c);
+  color: white;
+  padding: 20px 20px 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgba(255,255,255,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header-title {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.header-subtitle {
+  font-size: 12px;
+  opacity: 0.85;
+  margin-top: 1px;
+}
+
+.btn-logout {
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.4);
+  color: white;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-logout:hover {
+  background: rgba(255,255,255,0.35);
+}
+
+/* Welcome Section */
+.welcome-section {
+  padding: 20px 20px 10px;
+  border-bottom: 1px solid #eef4f1;
+}
+
+#welcome-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2f7a5c;
+}
+
+#welcome-text {
+  font-size: 13px;
+  color: #6b8c7a;
+  margin-top: 4px;
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.section-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #2f7a5c;
+  margin-bottom: 14px;
+  margin-top: 4px;
+}
+
+/* Link Form */
+.link-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.link-form input {
+  flex: 1;
+  min-width: 0;
+  padding: 12px 14px;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  font-size: 15px;
+  text-transform: uppercase;
+  font-family: inherit;
+}
+
+.link-form input:focus {
+  outline: none;
+  border-color: #45a081;
+}
+
+.btn-vincular {
+  background-color: #45a081;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 0 18px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+
+.btn-vincular:hover {
+  background-color: #2f7a5c;
+}
+
+.btn-vincular:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.error-text {
+  color: #c43224;
+  font-size: 13px;
+  margin: 0 0 15px;
+  min-height: 16px;
+}
+
+/* Patients List */
+.patients-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.patient-pill {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f1f8f4;
+  border: 1px solid #8ccba7;
+  padding: 12px 15px;
+  border-radius: 12px;
+  font-size: 14px;
+}
+
+.patient-pill .remove-link {
+  background: #ffeded;
+  color: #c43224;
+  border: 1px solid #ffcccc;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  flex-shrink: 0;
+  font-size: 16px;
+  line-height: 1;
+  transition: background 0.2s;
+}
+
+.patient-pill .remove-link:hover {
+  background: #c43224;
+  color: white;
+}
+
+/* Alerts List */
+.alerts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.alert-card {
+  background-color: #fff5f5;
+  border: 1px solid #f3b6b0;
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+
+.alert-card.alert-recente {
+  background-color: #ffe4e1;
+  border-color: #c43224;
+  animation: pulse-alert 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-alert {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(196, 50, 36, 0.25); }
+  50% { box-shadow: 0 0 0 6px rgba(196, 50, 36, 0); }
+}
+
+.alert-card .alert-titulo {
+  font-weight: 700;
+  color: #c43224;
+  margin: 0 0 4px;
+  font-size: 14px;
+}
+
+.alert-card .alert-tempo {
+  font-size: 12px;
+  color: #777;
+  margin: 0;
+}
+
+/* Empty Card */
+.empty-card {
+  background-color: #f9fdf9;
+  border: 1px dashed #8ccba7;
+  border-radius: 16px;
+  padding: 30px 20px;
+  text-align: center;
+  color: #6b8c7a;
+  margin-bottom: 25px;
+}
+
+.empty-card svg {
+  margin-bottom: 12px;
+}
+
+.empty-card p {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.empty-card .empty-desc {
+  font-size: 13px;
+  color: #8baa97;
+  margin-top: 6px;
+}
+
+/* Info List */
+.info-list {
+  margin-top: 20px;
+  padding: 16px;
+  background-color: #f9fdf9;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.info-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  color: #5a7a6a;
+  line-height: 1.4;
+}
+
+.info-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
+.info-dot.green { background-color: #45a081; }
+.info-dot.blue { background-color: #4a90b8; }
+.info-dot.orange { background-color: #e07a2b; }

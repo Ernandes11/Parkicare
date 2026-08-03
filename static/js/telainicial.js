@@ -468,6 +468,26 @@ function renderEmergencyContacts() {
     if (!currentUser.whatsapp && !currentUser.whatsapp2) {
         container.innerHTML = '<p style="color:red">Nenhum contato configurado!</p>';
     }
+
+    // Cuidador(es) vinculado(s) também são avisados (via tela do cuidador)
+    carregarCuidadoresNoModal(container);
+}
+
+async function carregarCuidadoresNoModal(container) {
+    const token = localStorage.getItem('parkicare_token');
+    if (!token) return;
+    try {
+        const response = await fetch('/api/vinculo/meus-cuidadores', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!response.ok) return;
+        const cuidadores = await response.json();
+        cuidadores.forEach(c => {
+            container.innerHTML += `<div class="contact-badge">Cuidador(a): ${c.nome}</div>`;
+        });
+    } catch (e) {
+        console.error('Erro ao carregar cuidadores vinculados:', e);
+    }
 }
 
 function formatarTel(tel) {

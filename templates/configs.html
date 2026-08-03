@@ -135,6 +135,24 @@
             </div>
         </div>
 
+        <!-- CARTÃO VÍNCULO COM CUIDADOR (só aparece para pacientes) -->
+        <div class="card card-vinculo" id="card-vinculo-cuidador" style="display:none;">
+            <div class="card-title title-label">
+                <img src="/static/img/telefone.png" alt="Cuidador" width="24" height="24">
+                <span>Meu cuidador</span>
+            </div>
+
+            <div class="card-body">
+                <p class="desc-text">Compartilhe este código com quem vai te acompanhar. Ao usá-lo na tela de cuidador, ele passa a receber seus alertas de emergência.</p>
+                <div class="codigo-vinculo-box">
+                    <span id="codigo-vinculo-texto">------</span>
+                    <button type="button" class="outline-btn small-margin" id="btn-copiar-codigo" onclick="copiarCodigoVinculo()">Copiar</button>
+                </div>
+
+                <div id="lista-cuidadores-vinculados" class="saved-contacts-list"></div>
+            </div>
+        </div>
+
     </div>
 
     <!-- Modal Novo Contato -->

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ParkiCare – Cuidador</title>
+    <link rel="stylesheet" href="/static/css/telacuidador.css">
+</head>
+<body>
+  <div class="container">
+
+    <!-- Header -->
+    <div class="header">
+      <div class="header-left">
+        <div class="header-logo">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          </svg>
+        </div>
+        <div>
+          <div class="header-title">ParkiCare</div>
+          <div class="header-subtitle">Área do Cuidador</div>
+        </div>
+      </div>
+      <button id="btn-logout" class="btn-logout">Sair</button>
+    </div>
+
+    <!-- Welcome -->
+    <div class="welcome-section">
+      <div id="welcome-title">Carregando...</div>
+      <div id="welcome-text"></div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+
+      <h3 class="section-title">Paciente acompanhado</h3>
+
+      <div class="link-form">
+        <input type="text" id="input-codigo-vinculo" maxlength="6" placeholder="Código do paciente (ex: A1B2C3)" autocomplete="off">
+        <button type="button" id="btn-vincular" class="btn-vincular">Vincular</button>
+      </div>
+      <p class="error-text" id="vinculo-error"></p>
+
+      <div id="patient-card" class="empty-card">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#45a081" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+        <p><strong>Nenhum paciente vinculado ainda.</strong></p>
+        <p class="empty-desc">Peça o código de vínculo para o paciente (ele encontra em Configurações) e informe acima.</p>
+      </div>
+
+      <div id="patients-list" class="patients-list"></div>
+
+      <h3 class="section-title" id="alerts-title" style="display:none;">Alertas recentes</h3>
+      <div id="alerts-list" class="alerts-list"></div>
+
+      <div class="info-list">
+        <div class="info-item">
+          <span class="info-dot green"></span>
+          Pacientes vinculados aparecem aqui com seus dados de acompanhamento.
+        </div>
+        <div class="info-item">
+          <span class="info-dot blue"></span>
+          Quando um paciente vinculado disparar o botão de emergência, o alerta aparece aqui.
+        </div>
+        <div class="info-item">
+          <span class="info-dot orange"></span>
+          Os alertas são verificados automaticamente a cada 8 segundos.
+        </div>
+      </div>
+
+    </div><!-- /main-content -->
+
+  </div><!-- /container -->
+
+  <script src="/static/js/telacuidador.js"></script>
+</body>
+</html>

@@ -26,9 +26,70 @@ async function checkAuth() {
         if (response.ok) {
             currentUser = await response.json();
             renderSavedContacts();
+            renderCardVinculo();
         }
     } catch (e) {
         console.error("Error loading profile:", e);
+    }
+}
+
+// Mostra o cartão "Meu cuidador" apenas para pacientes, com o código
+// que eles compartilham para vincular um cuidador.
+function renderCardVinculo() {
+    const card = document.getElementById('card-vinculo-cuidador');
+    if (!card || !currentUser) return;
+
+    if (currentUser.tipo !== 'paciente') {
+        card.style.display = 'none';
+        return;
+    }
+
+    card.style.display = '';
+    const codigoEl = document.getElementById('codigo-vinculo-texto');
+    if (codigoEl) codigoEl.textContent = currentUser.codigo_vinculo || '------';
+
+    carregarCuidadoresVinculados();
+}
+
+function copiarCodigoVinculo() {
+    if (!currentUser || !currentUser.codigo_vinculo) return;
+    navigator.clipboard?.writeText(currentUser.codigo_vinculo)
+        .then(() => {
+            const btn = document.getElementById('btn-copiar-codigo');
+            if (!btn) return;
+            const textoOriginal = btn.textContent;
+            btn.textContent = 'Copiado!';
+            setTimeout(() => { btn.textContent = textoOriginal; }, 1500);
+        })
+        .catch(() => alert('Não foi possível copiar automaticamente. Código: ' + currentUser.codigo_vinculo));
+}
+
+async function carregarCuidadoresVinculados() {
+    const token = localStorage.getItem('parkicare_token');
+    const listDiv = document.getElementById('lista-cuidadores-vinculados');
+    if (!token || !listDiv) return;
+
+    try {
+        const response = await fetch('/api/vinculo/meus-cuidadores', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!response.ok) return;
+        const cuidadores = await response.json();
+
+        listDiv.innerHTML = '';
+        if (cuidadores.length === 0) {
+            listDiv.innerHTML = '<p class="desc-text">Nenhum cuidador vinculado ainda.</p>';
+            return;
+        }
+        cuidadores.forEach(c => {
+            listDiv.innerHTML += `
+                <div class="contact-pill">
+                    <span><strong>${c.nome}</strong> (cuidador)</span>
+                </div>
+            `;
+        });
+    } catch (e) {
+        console.error('Erro ao carregar cuidadores vinculados:', e);
     }
 }
 
