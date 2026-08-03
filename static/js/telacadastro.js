@@ -53,6 +53,29 @@ if (btnAddContact && contactsContainer) {
     });
 }
 
+// Mostrar/Ocultar contatos de emergência baseado no Tipo de Usuário (Paciente x Cuidador)
+const radiosTipo = document.querySelectorAll('input[name="tipo"]');
+const sectionContatosHeader = document.querySelector('.contacts-header');
+const sectionContatosContainer = document.getElementById('contacts-container');
+
+function atualizarVisibilidadeContatos() {
+    const tipoSelecionado = document.querySelector('input[name="tipo"]:checked')?.value;
+    if (tipoSelecionado === 'cuidador') {
+        if (sectionContatosHeader) sectionContatosHeader.style.display = 'none';
+        if (sectionContatosContainer) sectionContatosContainer.style.display = 'none';
+    } else {
+        if (sectionContatosHeader) sectionContatosHeader.style.display = '';
+        if (sectionContatosContainer) sectionContatosContainer.style.display = '';
+    }
+}
+
+radiosTipo.forEach(radio => {
+    radio.addEventListener('change', atualizarVisibilidadeContatos);
+});
+
+// Executa na inicialização
+atualizarVisibilidadeContatos();
+
 if (form) {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -65,8 +88,11 @@ if (form) {
     const email = document.getElementById('email').value.trim();
     const senhaValor = senha.value.trim();
     const confirmarSenha = document.getElementById('confirmar_senha').value.trim();
-    const nomeContato = document.getElementById('nome_contato').value.trim();
-    const whatsapp = document.getElementById('whatsapp').value.trim();
+    const tipo = document.querySelector('input[name="tipo"]:checked')?.value || 'paciente';
+    
+    // Contatos (opcional se for cuidador)
+    const nomeContato = document.getElementById('nome_contato')?.value.trim() || '';
+    const whatsapp = document.getElementById('whatsapp')?.value.trim() || '';
     const whatsapp2Elem = document.getElementById('whatsapp2');
     const whatsapp2 = whatsapp2Elem ? whatsapp2Elem.value.trim() : '';
     const nomeContato2Elem = document.getElementById('nome_contato2');
@@ -84,30 +110,44 @@ if (form) {
     if (!email || !/\S+@\S+\.\S+/.test(email)) showError('email', 'Email inválido.');
     if (!senhaValor || senhaValor.length < 6) showError('senha', 'Senha deve ter no mínimo 6 caracteres.');
     if (senhaValor !== confirmarSenha) showError('confirmar-senha', 'As senhas não coincidem.');
-    if (!nomeContato) showError('nome-contato', 'Preencha o nome do contato de emergência.');
-    if (!whatsapp || !/^[0-9]{10,11}$/.test(whatsapp)) showError('whatsapp', 'Número inválido (apenas números, DDD+Numero).');
-    if (whatsapp2 && !/^[0-9]{10,11}$/.test(whatsapp2)) showError('whatsapp2', 'Número inválido (apenas números, DDD+Numero).');
+    
+    if (tipo === 'paciente') {
+        if (!nomeContato) showError('nome-contato', 'Preencha o nome do contato de emergência.');
+        if (!whatsapp || !/^[0-9]{10,11}$/.test(whatsapp)) showError('whatsapp', 'Número inválido (apenas números, DDD+Numero).');
+        if (whatsapp2 && !/^[0-9]{10,11}$/.test(whatsapp2)) showError('whatsapp2', 'Número inválido (apenas números, DDD+Numero).');
+    }
 
     if (hasError) return;
 
     // Flask Cadastro
     try {
       const btn = form.querySelector('button.btn-primary');
-      btn.disabled = true;
-      btn.innerText = 'Criando conta...';
+      if (btn) {
+        btn.disabled = true;
+        btn.innerText = 'Criando conta...';
+      }
+
+      const payload = {
+        nome,
+        email,
+        senha: senhaValor,
+        tipo
+      };
+
+      if (tipo === 'paciente') {
+        payload.nome_contato = nomeContato;
+        payload.whatsapp = whatsapp;
+        payload.whatsapp2 = whatsapp2;
+        payload.nome_contato2 = nomeContato2;
+      } else {
+        // Cuidadores precisam enviar nome_contato obrigatório no app.py para validação
+        payload.nome_contato = "Cuidador"; 
+      }
 
       const response = await fetch('/api/cadastro', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          nome,
-          email,
-          senha: senhaValor,
-          nome_contato: nomeContato,
-          whatsapp,
-          whatsapp2: whatsapp2,
-          nome_contato2: nomeContato2
-        })
+        body: JSON.stringify(payload)
       });
 
       const result = await response.json();
@@ -126,7 +166,7 @@ if (form) {
       const btn = form.querySelector('button.btn-primary');
       if (btn) {
         btn.disabled = false;
-        btn.innerText = 'Criar Conta';
+        btn.innerText = 'Cadastrar';
       }
     }
   });

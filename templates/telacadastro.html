@@ -23,6 +23,20 @@
         </div>
 
         <div class="input-group">
+          <label>Você é:</label>
+          <div class="tipo-usuario-group" id="tipo-usuario-group">
+            <label class="tipo-usuario-option">
+              <input type="radio" name="tipo" value="paciente" id="tipo_paciente" checked>
+              <span>Paciente</span>
+            </label>
+            <label class="tipo-usuario-option">
+              <input type="radio" name="tipo" value="cuidador" id="tipo_cuidador">
+              <span>Cuidador</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="input-group">
           <label for="email">Email</label>
           <input type="email" id="email" name="email" placeholder="seu@email.com" required autocomplete="email">
           <p class="error-text" id="email-error"></p>
@@ -46,32 +60,38 @@
           <p class="error-text" id="confirmar-senha-error"></p>
         </div>
 
-        <div class="contacts-header">
-            <h2>Contatos de Emergência</h2>
-            <button type="button" class="btn-add-contact" id="btn-add-contact">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
-                Adicionar
-            </button>
-        </div>
+        <div id="emergency-contacts-section">
+          <div class="contacts-header" id="contacts-header">
+              <h2>Contatos de Emergência</h2>
+              <button type="button" class="btn-add-contact" id="btn-add-contact">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="12" y1="5" x2="12" y2="19"></line>
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                  Adicionar
+              </button>
+          </div>
 
-        <div id="contacts-container">
-          <div class="contact-card">
-              <div class="input-group">
-                  <label for="nome_contato">Nome do Contato</label>
-                  <input type="text" id="nome_contato" name="nome_contato" placeholder="Nome da pessoa de contato" required autocomplete="off">
-                  <p class="error-text" id="nome-contato-error"></p>
-              </div>
+          <div id="contacts-container">
+            <div class="contact-card">
+                <div class="input-group">
+                    <label for="nome_contato">Nome do Contato</label>
+                    <input type="text" id="nome_contato" name="nome_contato" placeholder="Nome da pessoa de contato" required autocomplete="off">
+                    <p class="error-text" id="nome-contato-error"></p>
+                </div>
 
-              <div class="input-group">
-                  <label for="whatsapp">Telefone do Contato</label>
-                  <input type="tel" id="whatsapp" name="whatsapp" placeholder="(00) 00000-0000" required autocomplete="tel">
-                  <p class="error-text" id="whatsapp-error"></p>
-              </div>
+                <div class="input-group">
+                    <label for="whatsapp">Telefone do Contato</label>
+                    <input type="tel" id="whatsapp" name="whatsapp" placeholder="(00) 00000-0000" required autocomplete="tel">
+                    <p class="error-text" id="whatsapp-error"></p>
+                </div>
+            </div>
           </div>
         </div>
+
+        <p class="info-text" id="cuidador-info-text" style="display: none;">
+          Como cuidador, você não precisa cadastrar um contato de emergência — você é quem vai acompanhar o paciente.
+        </p>
 
         <div class="form-footer">
           <button type="submit" class="btn-primary">Cadastrar</button>

@@ -1,27 +1,45 @@
+html, body {
+    height: 100%;
+}
+
 body {
     margin: 0;
     font-family: 'Open Sans', Arial, sans-serif;
+    /* Avoid the page bouncing/scrolling while the user draws with a finger */
+    overscroll-behavior: none;
 }
 
 .container {
   min-height: 100vh;
+  min-height: 100dvh;
+  /* dvh accounts for mobile browser toolbars */
   box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    width: 100%;
     max-width: 414px;
     /* Adjusted for typical mobile width reference */
-    aspect-ratio: 9/16;
-    margin: 10px auto;
-    padding: 100px 30px 20px;
+    margin: 0 auto;
+    padding: 40px 20px 20px;
     text-align: center;
     background-color: #FEFBF0;
     /* Cream background */
-    border-radius: 18px;
+    border-radius: 0;
     box-sizing: border-box;
-    /* Ensure padding doesn't break ratio sizing */
-    /* box-shadow: 0 4px 6px rgba(0,0,0,0.1); Removed shadow to stay flatter like screenshot if needed, but safe to keep or remove. Let's keep it simple. */
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    /* Distribute content */
+    justify-content: flex-start;
+    gap: 10px;
+}
+
+/* On larger screens (tablet/desktop) give the card back its floating look */
+@media (min-width: 480px) {
+    .container {
+        min-height: calc(100vh - 20px);
+        min-height: calc(100dvh - 20px);
+        margin: 10px auto;
+        padding: 60px 30px 20px;
+        border-radius: 18px;
+        justify-content: space-between;
+    }
 }
 
 .topo {
@@ -68,6 +86,15 @@ p {
     margin: 20px auto;
     background-color: #fff;
     /* background-image removed - handled by JS */
+
+    /* Responsivo: a resolução interna do canvas continua 325x325 (definida no HTML),
+       mas o tamanho exibido se ajusta à largura da tela sem cortar em smartphones. */
+    width: 100%;
+    max-width: 325px;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    /* Impede que o dedo/mouse "arraste" a página ao desenhar */
+    touch-action: none;
 }
 
 .botoes {

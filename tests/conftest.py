@@ -35,8 +35,10 @@ def cadastrar(client, email, tipo='paciente', **extra):
         "email": email,
         "senha": extra.pop('senha', 'senha123'),
         "tipo": tipo,
-        "nome_contato": extra.pop('nome_contato', 'Contato Teste'),
     }
+    if tipo == 'paciente' or tipo not in ('paciente', 'cuidador'):
+        payload.setdefault('nome_contato', 'Contato de Emergência')
+        payload.setdefault('whatsapp', '11999999999')
     payload.update(extra)
     return client.post('/api/cadastro', json=payload)
 

@@ -17,25 +17,77 @@ espiral.onload = () => {
     ctx.globalAlpha = 1;
 };
 
-// parte do desenho
-canvas.addEventListener("mousedown", () => desenhando = true);
-canvas.addEventListener("mouseup", () => {
-    desenhando = false;
-    ctx.beginPath();
-});
-
-canvas.addEventListener("mousemove", (e) => {
-    if (!desenhando) return;
-
+// Converte a posição do ponteiro (mouse ou dedo) em coordenadas do canvas.
+// Como agora o canvas é responsivo (tamanho exibido pode ser diferente da
+// resolução interna 325x325), é preciso escalar pela proporção real.
+function getPos(clientX, clientY) {
     const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    return {
+        x: (clientX - rect.left) * scaleX,
+        y: (clientY - rect.top) * scaleY
+    };
+}
 
+function iniciarDesenho(x, y) {
+    desenhando = true;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+}
+
+function desenharAte(x, y) {
+    if (!desenhando) return;
     ctx.lineTo(x, y);
     ctx.stroke();
     ctx.beginPath();
     ctx.moveTo(x, y);
+}
+
+function pararDesenho() {
+    desenhando = false;
+    ctx.beginPath();
+}
+
+// parte do desenho - eventos de mouse (desktop)
+canvas.addEventListener("mousedown", (e) => {
+    const { x, y } = getPos(e.clientX, e.clientY);
+    iniciarDesenho(x, y);
 });
+canvas.addEventListener("mouseup", pararDesenho);
+canvas.addEventListener("mouseleave", pararDesenho);
+
+canvas.addEventListener("mousemove", (e) => {
+    if (!desenhando) return;
+    const { x, y } = getPos(e.clientX, e.clientY);
+    desenharAte(x, y);
+});
+
+// parte do desenho - eventos de toque (smartphone/tablet)
+canvas.addEventListener("touchstart", (e) => {
+    e.preventDefault(); // evita rolar/dar zoom na página ao tocar no canvas
+    const touch = e.touches[0];
+    const { x, y } = getPos(touch.clientX, touch.clientY);
+    iniciarDesenho(x, y);
+}, { passive: false });
+
+canvas.addEventListener("touchmove", (e) => {
+    e.preventDefault();
+    if (!desenhando) return;
+    const touch = e.touches[0];
+    const { x, y } = getPos(touch.clientX, touch.clientY);
+    desenharAte(x, y);
+}, { passive: false });
+
+canvas.addEventListener("touchend", (e) => {
+    e.preventDefault();
+    pararDesenho();
+}, { passive: false });
+
+canvas.addEventListener("touchcancel", (e) => {
+    e.preventDefault();
+    pararDesenho();
+}, { passive: false });
 
 // botao de refazer
 document.querySelector(".refazer").addEventListener("click", () => {
@@ -59,7 +111,7 @@ document.querySelector(".exportar").addEventListener("click", () => {
     pdf.text("Aqui está o seu desenho do teste", 20, 20);
 
     pdf.setFontSize(14);
-    pdf.text(`Data e hora: ${dataHora}`, 20, 30);
+    pdf.text(`Realizado em: ${dataHora}`, 20, 30);
 
     const imgData = canvas.toDataURL("image/png");
     pdf.addImage(imgData, "PNG", 15, 40, 180, 180);

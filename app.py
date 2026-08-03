@@ -162,7 +162,11 @@ def cadastro():
         if not data.get('nome'):
             return jsonify({"erro": "Nome é obrigatório"}), 400
 
-        if not data.get('nome_contato'):
+        tipo = data.get('tipo', 'paciente')
+        if tipo not in ('paciente', 'cuidador'):
+            tipo = 'paciente'
+
+        if tipo == 'paciente' and not data.get('nome_contato'):
             return jsonify({"erro": "Nome do contato de emergência é obrigatório"}), 400
 
         email = data['email'].lower().strip()
@@ -171,11 +175,6 @@ def cadastro():
         usuario_existente = Usuario.query.filter_by(email=email).first()
         if usuario_existente:
             return jsonify({"erro": "Este email já está cadastrado"}), 400
-
-        # Tipo: apenas 'paciente' ou 'cuidador' são válidos
-        tipo = data.get('tipo', 'paciente')
-        if tipo not in ('paciente', 'cuidador'):
-            tipo = 'paciente'
 
         # Criar novo usuário
         senha_hash = generate_password_hash(data['senha'])
