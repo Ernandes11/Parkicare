@@ -574,11 +574,12 @@ def aplicar_migracoes_simples():
     except Exception as e:
         print(f"[MIGRACAO] Aviso: {e}")
 
+# Inicialização e migração do banco de dados (garante a criação mesmo se rodar via flask run ou wsgi)
+with app.app_context():
+    if not os.path.exists('instance'):
+        os.makedirs('instance')
+    db.create_all()
+    aplicar_migracoes_simples()
+
 if __name__ == '__main__':
-    with app.app_context():
-        # Ensure instances directory exists
-        if not os.path.exists('instance'):
-            os.makedirs('instance')
-        db.create_all()
-        aplicar_migracoes_simples()
     app.run(debug=True, host='127.0.0.1', port=5000)
