@@ -177,6 +177,25 @@ body {
   padding: 12px 15px;
   border-radius: 12px;
   font-size: 14px;
+  gap: 10px;
+}
+
+.patient-pill-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.btn-med-link {
+  background-color: #45a081;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 .patient-pill .remove-link {

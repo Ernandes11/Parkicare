@@ -60,6 +60,15 @@ async function checkAuth() {
             return;
         }
         currentUser = await response.json();
+
+        // Um cuidador não deve cair no dashboard do paciente (ex: link
+        // antigo salvo, ou digitando a URL direto) — manda ele para a
+        // tela dele.
+        if (currentUser.tipo === 'cuidador') {
+            currentUser = null; // evita rodar a lógica do dashboard do paciente antes do redirect
+            window.location.href = '/cuidador';
+            return;
+        }
     } catch (e) {
         console.error("Auth check failed:", e);
         localStorage.removeItem('parkicare_token');
@@ -155,6 +164,7 @@ async function renderMedicamentos() {
         div.onclick = () => abrirDetalhes(med.id);
 
         div.innerHTML = `
+            <img class="new-med-foto" src="${med.foto || '/static/img/icone_medicamentos_novo.png'}" alt="" style="${med.foto ? '' : 'opacity:.35; padding:8px; box-sizing:border-box;'}">
             <div class="new-med-time">
                 ${med.horario}
             </div>
@@ -186,6 +196,16 @@ async function abrirDetalhes(id) {
 
     currentDetailId = id;
     document.getElementById('detail-nome').innerText = med.nome;
+
+    const fotoEl = document.getElementById('detail-foto');
+    if (fotoEl) {
+        if (med.foto) {
+            fotoEl.src = med.foto;
+            fotoEl.style.display = 'block';
+        } else {
+            fotoEl.style.display = 'none';
+        }
+    }
 
     const info = `
         Horário: ${med.horario}<br>
@@ -310,17 +330,33 @@ async function checkNotifications() {
             if (!alertedMeds.has(med.id)) {
                 alertedMeds.add(med.id);
                 currentMedId = med.id;
-                showModal(med.id, med.nome);
+                showModal(med.id, med.nome, med.foto);
             }
         }
     });
 }
 
-function showModal(medId, medNome) {
+function showModal(medId, medNome, medFoto) {
     const modal = document.getElementById('notification-modal');
     const button = document.querySelector('.notification-button');
+    const nomeEl = document.getElementById('notification-med-nome');
+    const fotoEl = document.getElementById('notification-foto');
+    const placeholderEl = document.getElementById('notification-foto-placeholder');
 
     if (modal) {
+        if (nomeEl) nomeEl.textContent = medNome || '';
+
+        if (fotoEl && placeholderEl) {
+            if (medFoto) {
+                fotoEl.src = medFoto;
+                fotoEl.style.display = 'block';
+                placeholderEl.style.display = 'none';
+            } else {
+                fotoEl.style.display = 'none';
+                placeholderEl.style.display = 'flex';
+            }
+        }
+
         playSound();
         modal.classList.remove('hidden');
 

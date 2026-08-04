@@ -145,6 +145,16 @@ p.subtitle {
   cursor: pointer;
 }
 
+.new-med-foto {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  object-fit: cover;
+  background-color: #f4f4f4;
+  border: 1px solid #eee;
+  flex-shrink: 0;
+}
+
 .new-med-time {
   font-size: 20px;
   font-weight: 800;
@@ -499,6 +509,50 @@ p.subtitle {
   font-weight: 700 !important;
   margin: 0 !important;
   text-align: left !important;
+}
+
+/* Foto do remédio no modal de notificação: é o principal ponto de
+   reconhecimento para quem não consegue ler o nome. */
+.notification-foto {
+  width: 100%;
+  max-width: 220px;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 18px;
+  margin: 15px auto;
+  display: block;
+  border: 3px solid #43a082;
+}
+
+.notification-foto-placeholder {
+  width: 100%;
+  max-width: 220px;
+  aspect-ratio: 1 / 1;
+  margin: 15px auto;
+  border-radius: 18px;
+  background-color: #f4f4f4;
+  border: 2px dashed #ccc;
+  align-items: center;
+  justify-content: center;
+}
+
+.notification-med-nome {
+  font-size: 22px !important;
+  font-weight: 800 !important;
+  color: #43a082 !important;
+  text-align: center !important;
+  margin: 0 0 8px !important;
+}
+
+/* Foto no modal de detalhes do remédio */
+.detail-foto {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 16px;
+  border: 2px solid #eee;
+  display: block;
+  margin: 0 auto 12px;
 }
 
 .notification-text {

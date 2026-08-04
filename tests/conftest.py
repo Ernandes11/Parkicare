@@ -1,5 +1,7 @@
 import os
 import sys
+import shutil
+import tempfile
 
 # Garante uma JWT_SECRET_KEY previsível/definida antes de importar o app,
 # assim os testes não dependem da chave aleatória gerada em desenvolvimento.
@@ -18,6 +20,12 @@ def client():
     app_module.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
     app_module.app.config['TESTING'] = True
 
+    # Fotos de medicamentos vão para uma pasta temporária, para não sujar
+    # static/uploads/ do repositório com imagens geradas nos testes.
+    pasta_uploads_original = app_module.UPLOAD_FOLDER_MEDICAMENTOS
+    pasta_temp = tempfile.mkdtemp(prefix='parkicare_test_uploads_')
+    app_module.UPLOAD_FOLDER_MEDICAMENTOS = pasta_temp
+
     with app_module.app.app_context():
         app_module.db.create_all()
 
@@ -27,6 +35,9 @@ def client():
     with app_module.app.app_context():
         app_module.db.session.remove()
         app_module.db.drop_all()
+
+    app_module.UPLOAD_FOLDER_MEDICAMENTOS = pasta_uploads_original
+    shutil.rmtree(pasta_temp, ignore_errors=True)
 
 
 def cadastrar(client, email, tipo='paciente', **extra):

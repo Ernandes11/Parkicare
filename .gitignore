@@ -28,6 +28,9 @@ instance/
 .webassets-cache
 *.db
 
+# Fotos enviadas pelos usuários (não devem ir para o controle de versão)
+static/uploads/
+
 # IDE
 .vscode/
 .idea/

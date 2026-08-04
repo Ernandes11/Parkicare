@@ -218,6 +218,62 @@ input:focus {
     color: #666;
     pointer-events: none;
 }
+
+/* Foto do medicamento (input) */
+.foto-help-text {
+    font-size: 13px;
+    color: #777;
+    margin: 0 0 12px;
+    line-height: 1.4;
+}
+.foto-preview-wrapper {
+    position: relative;
+    width: fit-content;
+    margin-bottom: 12px;
+}
+#foto-preview {
+    width: 140px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 14px;
+    border: 1px solid #ddd;
+    display: block;
+}
+.btn-remover-foto {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #c0392b;
+    color: #fff;
+    border: 2px solid #fff;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.btn-tirar-foto {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #fafafa;
+    border: 1px dashed #45a081;
+    color: #2f7a5c;
+    border-radius: 12px;
+    padding: 12px 18px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    justify-content: center;
+    box-sizing: border-box;
+}
+.btn-tirar-foto:hover {
+    background: #f1f8f4;
+}
 input[type="time"] {
     /* Hide the default clock icon to use our own */
     padding-right: 40px;
@@ -263,6 +319,32 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     padding: 24px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
     margin-bottom: 16px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+.med-foto {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 1px solid #eee;
+    flex-shrink: 0;
+}
+.med-foto-placeholder {
+    width: 64px;
+    height: 64px;
+    border-radius: 12px;
+    background-color: #f4f4f4;
+    border: 1px dashed #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.med-info {
+    flex: 1;
+    min-width: 0;
 }
 .med-header-row {
     display: flex;

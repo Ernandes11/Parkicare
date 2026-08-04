@@ -1,12 +1,47 @@
 // telamedicamento.js - 3 States Logic
 
+// Se veio de /medicamentos?paciente_id=X&nome=Y, é o cuidador gerenciando
+// os remédios de um paciente vinculado.
+const paramsUrl = new URLSearchParams(window.location.search);
+const pacienteIdContexto = paramsUrl.get('paciente_id');
+const pacienteNomeContexto = paramsUrl.get('nome');
+
 document.addEventListener('DOMContentLoaded', async () => {
     const token = localStorage.getItem('parkicare_token');
     if (!token) {
         window.location.href = '/login';
         return;
     }
-    
+
+    // Sem contexto de paciente na URL: essa é a tela de remédios do
+    // próprio usuário. Se for um cuidador (que não tem remédios
+    // próprios), manda ele para a tela dele em vez de quebrar aqui.
+    if (!pacienteIdContexto) {
+        try {
+            const perfilResp = await fetch('/api/perfil', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (perfilResp.ok) {
+                const perfil = await perfilResp.json();
+                if (perfil.tipo === 'cuidador') {
+                    window.location.href = '/cuidador';
+                    return;
+                }
+            }
+        } catch (e) {
+            console.error('Falha ao verificar perfil:', e);
+        }
+    } else {
+        // Cuidador gerenciando o paciente vinculado: ajusta cabeçalho e
+        // o link de "voltar" para a tela do cuidador.
+        const titleEl = document.getElementById('page-title');
+        const subtitleEl = document.getElementById('page-subtitle');
+        const linkVoltar = document.getElementById('link-voltar');
+        if (titleEl) titleEl.textContent = pacienteNomeContexto ? `Remédios de ${pacienteNomeContexto}` : 'Remédios do paciente';
+        if (subtitleEl) subtitleEl.textContent = 'Gerencie os medicamentos deste paciente';
+        if (linkVoltar) linkVoltar.setAttribute('href', '/cuidador');
+    }
+
     await fetchMedicamentos();
 });
 
@@ -40,13 +75,17 @@ btnNewMeds.forEach(btn => {
 btnCancelForm.addEventListener('click', () => {
     formView.style.display = 'none';
     pageHeader.style.display = 'block';
+    resetarCampoFoto();
     renderUI(); // Go back to correct state (empty or list)
 });
 
 async function fetchMedicamentos() {
     const token = localStorage.getItem('parkicare_token');
     try {
-        const response = await fetch('/api/medicamentos', {
+        const url = pacienteIdContexto
+            ? `/api/medicamentos?paciente_id=${encodeURIComponent(pacienteIdContexto)}`
+            : '/api/medicamentos';
+        const response = await fetch(url, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         if (!response.ok) throw new Error('Erro ao buscar dados');
@@ -79,13 +118,67 @@ function renderUI() {
             clone.querySelector('.med-name').textContent = med.nome;
             clone.querySelector('.med-dosagem').textContent = med.dosagem;
             clone.querySelector('.med-horario').textContent = med.horario || '--:--';
-            
+
+            const fotoEl = clone.querySelector('.med-foto');
+            const placeholderEl = clone.querySelector('.med-foto-placeholder');
+            if (med.foto) {
+                fotoEl.src = med.foto;
+                fotoEl.style.display = 'block';
+                placeholderEl.style.display = 'none';
+            }
+
             const btnDelete = clone.querySelector('.btn-delete');
             btnDelete.addEventListener('click', () => deletarMedicamento(med.id));
             
             listContainer.appendChild(clone);
         });
     }
+}
+
+// Foto: preview + conversão para base64 (para enviar no JSON do form)
+const inputFoto = document.getElementById('foto');
+const fotoPreviewWrapper = document.getElementById('foto-preview-wrapper');
+const fotoPreviewImg = document.getElementById('foto-preview');
+const btnTirarFoto = document.getElementById('btn-tirar-foto');
+const btnRemoverFoto = document.getElementById('btn-remover-foto');
+let fotoBase64Atual = null;
+
+if (inputFoto) {
+    inputFoto.addEventListener('change', () => {
+        const arquivo = inputFoto.files && inputFoto.files[0];
+        if (!arquivo) return;
+
+        if (arquivo.size > 4 * 1024 * 1024) {
+            alert('A foto é muito grande. Escolha uma imagem de até 4MB.');
+            inputFoto.value = '';
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = () => {
+            fotoBase64Atual = reader.result; // já vem como "data:image/...;base64,...."
+            fotoPreviewImg.src = fotoBase64Atual;
+            fotoPreviewWrapper.style.display = 'inline-block';
+            btnTirarFoto.style.display = 'none';
+        };
+        reader.readAsDataURL(arquivo);
+    });
+}
+
+if (btnRemoverFoto) {
+    btnRemoverFoto.addEventListener('click', () => {
+        fotoBase64Atual = null;
+        inputFoto.value = '';
+        fotoPreviewWrapper.style.display = 'none';
+        btnTirarFoto.style.display = 'flex';
+    });
+}
+
+function resetarCampoFoto() {
+    fotoBase64Atual = null;
+    if (inputFoto) inputFoto.value = '';
+    if (fotoPreviewWrapper) fotoPreviewWrapper.style.display = 'none';
+    if (btnTirarFoto) btnTirarFoto.style.display = 'flex';
 }
 
 // Handle Form Submit
@@ -110,19 +203,23 @@ if (form) {
         submitBtn.disabled = true;
 
         try {
+            const payload = {
+                nome: nome,
+                horario: horario,
+                dosagem: dosagem,
+                intervalo: 0,
+                unidade: 'mg'
+            };
+            if (fotoBase64Atual) payload.foto = fotoBase64Atual;
+            if (pacienteIdContexto) payload.paciente_id = Number(pacienteIdContexto);
+
             const response = await fetch('/api/medicamentos', {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({
-                    nome: nome,
-                    horario: horario,
-                    dosagem: dosagem,
-                    intervalo: 0,
-                    unidade: 'mg'
-                })
+                body: JSON.stringify(payload)
             });
 
             if (!response.ok) {
@@ -131,6 +228,7 @@ if (form) {
             }
 
             form.reset();
+            resetarCampoFoto();
             await fetchMedicamentos(); // Will automatically return to the list view
             
         } catch (e) {
@@ -149,7 +247,10 @@ async function deletarMedicamento(id) {
     
     const token = localStorage.getItem('parkicare_token');
     try {
-        const response = await fetch(`/api/medicamentos/${id}`, {
+        const url = pacienteIdContexto
+            ? `/api/medicamentos/${id}?paciente_id=${encodeURIComponent(pacienteIdContexto)}`
+            : `/api/medicamentos/${id}`;
+        const response = await fetch(url, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` }
         });

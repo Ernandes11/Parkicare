@@ -7,6 +7,9 @@ from datetime import datetime
 import os
 import random
 import string
+import base64
+import uuid
+import binascii
 from sqlalchemy import text
 
 app = Flask(__name__, template_folder='templates', static_folder='static', static_url_path='/static')
@@ -68,6 +71,10 @@ class Medicamento(db.Model):
     unidade = db.Column(db.String(20), default='mg')
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'))
     tomado = db.Column(db.Boolean, default=False)
+    # Caminho (relativo a /static) da foto real da caixa/cartela do remédio.
+    # Ajuda pacientes não alfabetizados a reconhecer visualmente qual
+    # remédio é, sem depender de leitura.
+    foto = db.Column(db.String(255), nullable=True)
 
 class Alerta(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -86,6 +93,100 @@ def gerar_codigo_vinculo():
             return codigo
     # Extremamente improvável de cair aqui, mas evita loop infinito
     return ''.join(random.choices(alfabeto, k=10))
+
+def validar_forca_senha(senha):
+    """Retorna uma mensagem de erro se a senha for fraca, ou None se
+    estiver ok. Regra: mínimo 8 caracteres, com pelo menos uma letra e
+    um número (equilíbrio entre segurança e não travar usuários idosos
+    do app, que é o público-alvo)."""
+    if not senha:
+        return "A senha é obrigatória"
+    if len(senha) < 8:
+        return "A senha deve ter no mínimo 8 caracteres"
+    if not any(c.isalpha() for c in senha):
+        return "A senha deve conter pelo menos uma letra"
+    if not any(c.isdigit() for c in senha):
+        return "A senha deve conter pelo menos um número"
+    return None
+
+# Pasta onde as fotos de medicamentos ficam salvas (servida automaticamente
+# pelo Flask, já que fica dentro de /static).
+UPLOAD_FOLDER_MEDICAMENTOS = os.path.join(app.static_folder, 'uploads', 'medicamentos')
+TIPOS_IMAGEM_PERMITIDOS = {'jpeg': 'jpg', 'jpg': 'jpg', 'png': 'png', 'webp': 'webp'}
+TAMANHO_MAXIMO_FOTO_BYTES = 4 * 1024 * 1024  # 4MB
+
+def salvar_foto_medicamento(foto_base64):
+    """Recebe uma string 'data:image/jpeg;base64,...' (como o front-end
+    envia depois de tirar a foto pelo celular), valida e salva no disco.
+    Retorna o caminho relativo (ex: 'uploads/medicamentos/abc123.jpg') ou
+    levanta ValueError se a foto for inválida."""
+    if not foto_base64 or ',' not in foto_base64:
+        raise ValueError("Foto inválida")
+
+    cabecalho, dados = foto_base64.split(',', 1)
+    # cabecalho é algo como "data:image/jpeg;base64"
+    if 'image/' not in cabecalho:
+        raise ValueError("Arquivo enviado não é uma imagem")
+
+    extensao_bruta = cabecalho.split('image/')[1].split(';')[0].lower()
+    extensao = TIPOS_IMAGEM_PERMITIDOS.get(extensao_bruta)
+    if not extensao:
+        raise ValueError("Formato de imagem não suportado (use JPG, PNG ou WEBP)")
+
+    try:
+        conteudo = base64.b64decode(dados, validate=True)
+    except (binascii.Error, ValueError):
+        raise ValueError("Não foi possível ler os dados da imagem")
+
+    if len(conteudo) > TAMANHO_MAXIMO_FOTO_BYTES:
+        raise ValueError("A foto é muito grande (máximo 4MB)")
+
+    os.makedirs(UPLOAD_FOLDER_MEDICAMENTOS, exist_ok=True)
+    nome_arquivo = f"{uuid.uuid4().hex}.{extensao}"
+    caminho_completo = os.path.join(UPLOAD_FOLDER_MEDICAMENTOS, nome_arquivo)
+    with open(caminho_completo, 'wb') as f:
+        f.write(conteudo)
+
+    return f"uploads/medicamentos/{nome_arquivo}"
+
+def remover_foto_medicamento(caminho_relativo):
+    """Apaga o arquivo de foto do disco (usado ao trocar ou excluir a foto)."""
+    if not caminho_relativo:
+        return
+    caminho_completo = os.path.join(app.static_folder, caminho_relativo)
+    try:
+        if os.path.isfile(caminho_completo):
+            os.remove(caminho_completo)
+    except OSError as e:
+        print(f"[AVISO] Não foi possível remover foto antiga: {e}")
+
+def resolver_paciente_alvo(usuario_logado_id, paciente_id_solicitado):
+    """Decide de quem são os medicamentos que a requisição quer ver/editar.
+
+    - Paciente sem informar paciente_id: gerencia os próprios remédios.
+    - Cuidador: precisa informar paciente_id de um paciente vinculado a ele
+      (cuidador não tem remédios próprios).
+    Retorna (paciente_id, None) em caso de sucesso, ou (None, (mensagem, http_status))
+    em caso de erro.
+    """
+    usuario_logado = Usuario.query.get(usuario_logado_id)
+    if not usuario_logado:
+        return None, ("Usuário não encontrado", 404)
+
+    if usuario_logado.tipo == 'cuidador':
+        if not paciente_id_solicitado:
+            return None, ("Informe de qual paciente são os medicamentos", 400)
+        vinculo = Vinculo.query.filter_by(
+            paciente_id=paciente_id_solicitado, cuidador_id=usuario_logado_id
+        ).first()
+        if not vinculo:
+            return None, ("Você não está vinculado a este paciente", 403)
+        return paciente_id_solicitado, None
+
+    # Paciente só pode gerenciar os próprios remédios
+    if paciente_id_solicitado and int(paciente_id_solicitado) != usuario_logado_id:
+        return None, ("Você só pode gerenciar seus próprios medicamentos", 403)
+    return usuario_logado_id, None
 
 # ========== ROTAS DE PÁGINAS HTML ==========
 
@@ -161,6 +262,10 @@ def cadastro():
 
         if not data.get('nome'):
             return jsonify({"erro": "Nome é obrigatório"}), 400
+
+        erro_senha = validar_forca_senha(data['senha'])
+        if erro_senha:
+            return jsonify({"erro": erro_senha}), 400
 
         tipo = data.get('tipo', 'paciente')
         if tipo not in ('paciente', 'cuidador'):
@@ -246,7 +351,12 @@ def login():
 def listar():
     try:
         user_id = int(get_jwt_identity())
-        meds = Medicamento.query.filter_by(usuario_id=user_id).all()
+        paciente_id_param = request.args.get('paciente_id', type=int)
+        paciente_id, erro = resolver_paciente_alvo(user_id, paciente_id_param)
+        if erro:
+            return jsonify({"erro": erro[0]}), erro[1]
+
+        meds = Medicamento.query.filter_by(usuario_id=paciente_id).all()
         return jsonify([{
             "id": m.id,
             "nome": m.nome,
@@ -254,7 +364,8 @@ def listar():
             "horario": m.horario or '',
             "intervalo": m.intervalo or 0,
             "unidade": m.unidade or 'mg',
-            "tomado": m.tomado
+            "tomado": m.tomado,
+            "foto": f"/static/{m.foto}" if m.foto else None
         } for m in meds]), 200
     except Exception as e:
         return jsonify({"erro": str(e)}), 500
@@ -263,19 +374,83 @@ def listar():
 @jwt_required()
 def salvar():
     try:
-        data = request.json
+        data = request.json or {}
         user_id = int(get_jwt_identity())
+        paciente_id, erro = resolver_paciente_alvo(user_id, data.get('paciente_id'))
+        if erro:
+            return jsonify({"erro": erro[0]}), erro[1]
+
+        if not data.get('nome') or not data.get('dosagem'):
+            return jsonify({"erro": "Nome e dosagem são obrigatórios"}), 400
+
+        foto_path = None
+        if data.get('foto'):
+            try:
+                foto_path = salvar_foto_medicamento(data['foto'])
+            except ValueError as e:
+                return jsonify({"erro": str(e)}), 400
+
         med = Medicamento(
             nome=data['nome'],
             dosagem=data['dosagem'],
             horario=data.get('horario'),
             intervalo=data.get('intervalo', 0),
             unidade=data.get('unidade', 'mg'),
-            usuario_id=user_id
+            usuario_id=paciente_id,
+            foto=foto_path
         )
         db.session.add(med)
         db.session.commit()
-        return jsonify({"msg": "Medicamento salvo", "id": med.id, "nome": med.nome}), 201
+        return jsonify({
+            "msg": "Medicamento salvo",
+            "id": med.id,
+            "nome": med.nome,
+            "foto": f"/static/{med.foto}" if med.foto else None
+        }), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"erro": str(e)}), 500
+
+@app.route('/api/medicamentos/<int:med_id>', methods=['PUT'])
+@jwt_required()
+def editar_medicamento(med_id):
+    """Edita dados de um medicamento existente, incluindo trocar a foto.
+    (Complementa o PUT .../status, que só alterna tomado/não-tomado.)"""
+    try:
+        user_id = int(get_jwt_identity())
+        data = request.json or {}
+        paciente_id, erro = resolver_paciente_alvo(user_id, data.get('paciente_id'))
+        if erro:
+            return jsonify({"erro": erro[0]}), erro[1]
+
+        med = Medicamento.query.filter_by(id=med_id, usuario_id=paciente_id).first()
+        if not med:
+            return jsonify({"erro": "Medicamento não encontrado"}), 404
+
+        if 'nome' in data and data['nome']:
+            med.nome = data['nome']
+        if 'dosagem' in data and data['dosagem']:
+            med.dosagem = data['dosagem']
+        if 'horario' in data:
+            med.horario = data['horario']
+        if 'intervalo' in data:
+            med.intervalo = data['intervalo']
+        if 'unidade' in data:
+            med.unidade = data['unidade']
+        if data.get('foto'):
+            try:
+                nova_foto = salvar_foto_medicamento(data['foto'])
+            except ValueError as e:
+                return jsonify({"erro": str(e)}), 400
+            remover_foto_medicamento(med.foto)
+            med.foto = nova_foto
+
+        db.session.commit()
+        return jsonify({
+            "msg": "Medicamento atualizado",
+            "id": med.id,
+            "foto": f"/static/{med.foto}" if med.foto else None
+        }), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({"erro": str(e)}), 500
@@ -285,9 +460,15 @@ def salvar():
 def deletar_medicamento(med_id):
     try:
         user_id = int(get_jwt_identity())
-        med = Medicamento.query.filter_by(id=med_id, usuario_id=user_id).first()
+        paciente_id_param = request.args.get('paciente_id', type=int)
+        paciente_id, erro = resolver_paciente_alvo(user_id, paciente_id_param)
+        if erro:
+            return jsonify({"erro": erro[0]}), erro[1]
+
+        med = Medicamento.query.filter_by(id=med_id, usuario_id=paciente_id).first()
         if not med:
             return jsonify({"erro": "Medicamento não encontrado"}), 404
+        remover_foto_medicamento(med.foto)
         db.session.delete(med)
         db.session.commit()
         return jsonify({"msg": "Medicamento deletado"}), 200
@@ -300,11 +481,15 @@ def deletar_medicamento(med_id):
 def atualizar_status(med_id):
     try:
         user_id = int(get_jwt_identity())
-        med = Medicamento.query.filter_by(id=med_id, usuario_id=user_id).first()
+        data = request.json or {}
+        paciente_id, erro = resolver_paciente_alvo(user_id, data.get('paciente_id'))
+        if erro:
+            return jsonify({"erro": erro[0]}), erro[1]
+
+        med = Medicamento.query.filter_by(id=med_id, usuario_id=paciente_id).first()
         if not med:
             return jsonify({"erro": "Medicamento não encontrado"}), 404
 
-        data = request.json
         med.tomado = data.get('tomado', not med.tomado)
         db.session.commit()
         return jsonify({"msg": "Status atualizado", "tomado": med.tomado}), 200
@@ -561,6 +746,12 @@ def aplicar_migracoes_simples():
             db.session.commit()
             print("[MIGRACAO] Coluna 'codigo_vinculo' adicionada à tabela usuario")
 
+        colunas_med = [row[1] for row in db.session.execute(text("PRAGMA table_info(medicamento)")).fetchall()]
+        if 'foto' not in colunas_med:
+            db.session.execute(text("ALTER TABLE medicamento ADD COLUMN foto VARCHAR(255)"))
+            db.session.commit()
+            print("[MIGRACAO] Coluna 'foto' adicionada à tabela medicamento")
+
         # Gera o código de vínculo para pacientes que já existiam e ainda
         # não têm um (contas criadas antes desta funcionalidade existir).
         pacientes_sem_codigo = Usuario.query.filter(
@@ -578,6 +769,7 @@ def aplicar_migracoes_simples():
 with app.app_context():
     if not os.path.exists('instance'):
         os.makedirs('instance')
+    os.makedirs(UPLOAD_FOLDER_MEDICAMENTOS, exist_ok=True)
     db.create_all()
     aplicar_migracoes_simples()
 

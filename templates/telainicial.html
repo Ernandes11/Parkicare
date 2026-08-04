@@ -45,6 +45,7 @@
     <!-- Modal Detalhes -->
     <div id="details-modal" class="modal-overlay hidden">
       <div class="modal-content">
+        <img id="detail-foto" class="detail-foto" style="display:none;" alt="Foto do remédio">
         <h2 id="detail-nome">Nome do Medicamento</h2>
         <p id="detail-info">Detalhes...</p>
         <div class="modal-actions">
@@ -99,6 +100,15 @@
         </div>
         <h2 class="notification-title">Hora da medicação!</h2>
       </div>
+
+      <!-- Foto do remédio em destaque: ajuda quem não lê a reconhecer
+           qual remédio é, sem depender do texto. -->
+      <img id="notification-foto" class="notification-foto" style="display:none;" alt="Foto do remédio">
+      <div id="notification-foto-placeholder" class="notification-foto-placeholder" style="display:none;">
+        <img src="/static/img/icone_medicamentos_novo.png" alt="" width="40" height="40" style="opacity:.5;">
+      </div>
+
+      <p class="notification-med-nome" id="notification-med-nome"></p>
       <p class="notification-text">Confirme o lembrete agora. Caso contrário, o medicamento será marcado como atrasado.</p>
       <button class="notification-button" onclick="confirmarTomada()">Confirmar (10s)</button>
     </div>

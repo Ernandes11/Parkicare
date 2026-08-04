@@ -16,7 +16,7 @@
 <body>
     <div class="container main-card-layout">
         <div class="top-nav">
-            <a href="/inicial" class="back-link">
+            <a href="/inicial" class="back-link" id="link-voltar">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="19" y1="12" x2="5" y2="12"></line>
                     <polyline points="12 19 5 12 12 5"></polyline>
@@ -28,9 +28,9 @@
         <header class="page-header" id="page-header">
             <div class="header-title">
                 <img src="/static/img/icone_medicamentos_novo.png" alt="Ícone Medicamentos" width="28" height="28" style="object-fit: contain;">
-                <h1>Medicamentos</h1>
+                <h1 id="page-title">Medicamentos</h1>
             </div>
-            <p class="subtitle">Gerencie suas medicações</p>
+            <p class="subtitle" id="page-subtitle">Gerencie suas medicações</p>
         </header>
 
         <!-- Empty State View -->
@@ -116,6 +116,25 @@
                         </div>
                     </div>
 
+                    <div class="input-section">
+                        <label for="foto">Foto da caixa ou cartela</label>
+                        <p class="foto-help-text">Isso ajuda o paciente a reconhecer o remédio na hora do lembrete, mesmo sem saber ler.</p>
+
+                        <div id="foto-preview-wrapper" class="foto-preview-wrapper" style="display:none;">
+                            <img id="foto-preview" alt="Pré-visualização da foto do remédio">
+                            <button type="button" id="btn-remover-foto" class="btn-remover-foto" title="Remover foto">×</button>
+                        </div>
+
+                        <label for="foto" class="btn-tirar-foto" id="btn-tirar-foto">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                                <circle cx="12" cy="13" r="4"></circle>
+                            </svg>
+                            Tirar/escolher foto
+                        </label>
+                        <input type="file" id="foto" accept="image/*" capture="environment" style="display:none;">
+                    </div>
+
                     <div class="action-section">
                         <button type="submit" class="btn-register">Salvar Medicamento</button>
                     </div>
@@ -128,6 +147,10 @@
     <!-- Template for Med Card -->
     <template id="med-card-template">
         <div class="med-card">
+            <img class="med-foto" alt="Foto do medicamento" style="display:none;">
+            <div class="med-foto-placeholder">
+                <img src="/static/img/icone_medicamentos_novo.png" alt="" width="28" height="28" style="object-fit: contain; opacity:.5;">
+            </div>
             <div class="med-info">
                 <div class="med-header-row">
                     <h4 class="med-name"></h4>

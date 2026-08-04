@@ -148,7 +148,10 @@ async function carregarPacientesVinculados() {
             card.className = 'patient-pill';
             card.innerHTML = `
                 <span><strong>${p.nome}</strong></span>
-                <button class="remove-link" title="Remover vínculo" data-vinculo-id="${p.vinculo_id}">×</button>
+                <div class="patient-pill-actions">
+                    <a class="btn-med-link" href="/medicamentos?paciente_id=${p.id}&nome=${encodeURIComponent(p.nome)}">Remédios</a>
+                    <button class="remove-link" title="Remover vínculo" data-vinculo-id="${p.vinculo_id}">×</button>
+                </div>
             `;
             card.querySelector('.remove-link').addEventListener('click', () => removerVinculo(p.vinculo_id));
             listEl.appendChild(card);
