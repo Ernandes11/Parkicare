@@ -992,6 +992,26 @@ def aplicar_migracoes_simples():
         if pacientes_sem_codigo:
             db.session.commit()
             print(f"[MIGRACAO] Código de vínculo gerado para {len(pacientes_sem_codigo)} paciente(s) existente(s)")
+
+        # Garante contas padrão para login caso o banco esteja zerado após um deploy no Render
+        if not app.config.get('TESTING') and Usuario.query.count() == 0:
+            p = Usuario(
+                email="paciente@parkicare.com",
+                senha=generate_password_hash("senha1234"),
+                nome="Paciente Demo",
+                tipo="paciente",
+                nome_contato="Contato Emergência",
+                codigo_vinculo=gerar_codigo_vinculo()
+            )
+            c = Usuario(
+                email="cuidador@parkicare.com",
+                senha=generate_password_hash("senha1234"),
+                nome="Cuidador Demo",
+                tipo="cuidador"
+            )
+            db.session.add_all([p, c])
+            db.session.commit()
+            print("[MIGRACAO] Contas demo criadas (paciente@parkicare.com / cuidador@parkicare.com)")
     except Exception as e:
         print(f"[MIGRACAO] Aviso: {e}")
 
