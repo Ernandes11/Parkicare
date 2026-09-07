@@ -147,8 +147,9 @@ async function carregarPacientesVinculados() {
             const card = document.createElement('div');
             card.className = 'patient-pill';
             card.innerHTML = `
-                <span><strong>${p.nome}</strong></span>
-                <div class="patient-pill-actions">
+                <span><strong>${escapeHtml(p.nome)}</strong></span>
+                <div class="patient-pill-actions" style="display:flex; align-items:center; gap:6px;">
+                    <button class="btn-chat-paciente" style="margin:0; padding:6px 10px;" onclick="abrirChatCuidador(${p.id}, '${escapeHtml(p.nome)}')">💬 Chat</button>
                     <a class="btn-med-link" href="/medicamentos?paciente_id=${p.id}&nome=${encodeURIComponent(p.nome)}">Remédios</a>
                     <button class="remove-link" title="Remover vínculo" data-vinculo-id="${p.vinculo_id}">×</button>
                 </div>
@@ -214,4 +215,115 @@ async function carregarAlertas() {
     } catch (err) {
         console.error('Erro ao carregar alertas dos pacientes vinculados:', err);
     }
+}
+
+// ---------------------------------------------------------
+// FUNCIONALIDADE DE CHAT DO CUIDADOR
+// ---------------------------------------------------------
+let currentChatPatientId = null;
+let chatPollInterval = null;
+
+async function abrirChatCuidador(pacienteId, pacienteNome) {
+    currentChatPatientId = pacienteId;
+    const modal = document.getElementById('chat-modal');
+    const titleEl = document.getElementById('chat-title');
+
+    if (titleEl) titleEl.textContent = `Chat: ${pacienteNome}`;
+    if (modal) {
+        modal.style.display = 'flex';
+        modal.classList.remove('hidden');
+    }
+
+    await carregarMensagensChatAtual();
+    if (chatPollInterval) clearInterval(chatPollInterval);
+    chatPollInterval = setInterval(carregarMensagensChatAtual, 3000);
+}
+
+function fecharModalChat() {
+    const modal = document.getElementById('chat-modal');
+    if (modal) {
+        modal.style.display = 'none';
+        modal.classList.add('hidden');
+    }
+    if (chatPollInterval) {
+        clearInterval(chatPollInterval);
+        chatPollInterval = null;
+    }
+}
+
+async function carregarMensagensChatAtual() {
+    if (!currentChatPatientId) return;
+    const token = getToken();
+    const container = document.getElementById('chat-messages-container');
+    if (!container || !token) return;
+
+    try {
+        const response = await fetch(`/api/chat/mensagens/${currentChatPatientId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!response.ok) return;
+
+        const mensagens = await response.json();
+        if (mensagens.length === 0) {
+            container.innerHTML = '<div style="text-align:center; padding:20px; color:#aaa; font-size:0.9rem;">Nenhuma mensagem ainda. Envie um oi! 👋</div>';
+            return;
+        }
+
+        const html = mensagens.map(m => {
+            const hora = m.timestamp ? new Date(m.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+            return `
+                <div class="chat-msg-bubble ${m.sou_eu ? 'sent' : 'received'}">
+                    <div>${escapeHtml(m.conteudo)}</div>
+                    <div class="chat-msg-time">${hora}</div>
+                </div>
+            `;
+        }).join('');
+
+        const shouldScroll = container.scrollTop + container.clientHeight >= container.scrollHeight - 50;
+        container.innerHTML = html;
+        if (shouldScroll || container.dataset.initialLoad !== 'true') {
+            container.scrollTop = container.scrollHeight;
+            container.dataset.initialLoad = 'true';
+        }
+    } catch (e) {
+        console.error("Erro ao carregar mensagens no cuidador:", e);
+    }
+}
+
+async function enviarMensagemAtual() {
+    const input = document.getElementById('chat-input-text');
+    if (!input || !currentChatPatientId) return;
+    const texto = input.value.trim();
+    if (!texto) return;
+
+    const token = getToken();
+    input.value = '';
+
+    try {
+        const response = await fetch('/api/chat/enviar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                destinatario_id: currentChatPatientId,
+                conteudo: texto
+            })
+        });
+
+        if (response.ok) {
+            await carregarMensagensChatAtual();
+        } else {
+            const err = await response.json();
+            alert(err.erro || "Erro ao enviar mensagem.");
+        }
+    } catch (e) {
+        console.error("Erro ao enviar mensagem:", e);
+    }
+}
+
+function escapeHtml(text) {
+    if (!text) return '';
+    return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 }

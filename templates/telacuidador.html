@@ -75,7 +75,32 @@
 
     </div><!-- /main-content -->
 
-  </div><!-- /container -->
+  <!-- Modal Chat Cuidador -->
+  <div id="chat-modal" class="modal-overlay hidden" style="display: none; z-index: 1100;">
+    <div class="chat-modal-content">
+      <div class="chat-header">
+        <div class="chat-header-info">
+          <h3 id="chat-title">Chat com Paciente</h3>
+          <span id="chat-subtitle" class="chat-subtitle">Mensagens diretas</span>
+        </div>
+        <button class="btn-close-chat" onclick="fecharModalChat()">✕</button>
+      </div>
+
+      <div id="chat-messages-container" class="chat-messages">
+        <!-- Mensagens via JS -->
+      </div>
+
+      <div class="chat-input-area">
+        <input type="text" id="chat-input-text" placeholder="Digite sua mensagem..." autocomplete="off">
+        <button id="btn-send-message" onclick="enviarMensagemAtual()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
 
   <script src="/static/js/telacuidador.js"></script>
 </body>

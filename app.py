@@ -99,6 +99,21 @@ class HistoricoMedicamento(db.Model):
     data_registro = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     status = db.Column(db.String(50), nullable=False)
 
+class MensagemChat(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    remetente_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=False)
+    destinatario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=False)
+    conteudo = db.Column(db.Text, nullable=False)
+    timestamp = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    lida = db.Column(db.Boolean, default=False)
+
+def verificar_vinculo(u1_id, u2_id):
+    v = Vinculo.query.filter(
+        ((Vinculo.paciente_id == u1_id) & (Vinculo.cuidador_id == u2_id)) |
+        ((Vinculo.paciente_id == u2_id) & (Vinculo.cuidador_id == u1_id))
+    ).first()
+    return v is not None
+
 def gerar_codigo_vinculo():
     """Gera um código curto e único (ex: 'A1B2C3') para o paciente
     compartilhar com o cuidador."""
@@ -815,6 +830,126 @@ def historico_medicamentos():
             "data_registro": l.data_registro.isoformat() if l.data_registro else None,
             "status": l.status
         } for l in logs]), 200
+    except Exception as e:
+        return jsonify({"erro": str(e)}), 500
+
+# ========== ROTAS DE CHAT PACIENTE/CUIDADOR ==========
+
+@app.route('/api/chat/contatos', methods=['GET'])
+@jwt_required()
+def listar_contatos_chat():
+    try:
+        user_id = int(get_jwt_identity())
+        usuario = db.session.get(Usuario, user_id)
+        if not usuario:
+            return jsonify({"erro": "Usuário não encontrado"}), 404
+
+        contatos = []
+        if usuario.tipo == 'paciente':
+            vinculos = Vinculo.query.filter_by(paciente_id=user_id).all()
+            for v in vinculos:
+                c = db.session.get(Usuario, v.cuidador_id)
+                if c:
+                    contatos.append(c)
+        else:
+            vinculos = Vinculo.query.filter_by(cuidador_id=user_id).all()
+            for v in vinculos:
+                p = db.session.get(Usuario, v.paciente_id)
+                if p:
+                    contatos.append(p)
+
+        resultado = []
+        for contato in contatos:
+            nao_lidas = MensagemChat.query.filter_by(
+                remetente_id=contato.id,
+                destinatario_id=user_id,
+                lida=False
+            ).count()
+
+            ultima_msg = MensagemChat.query.filter(
+                ((MensagemChat.remetente_id == user_id) & (MensagemChat.destinatario_id == contato.id)) |
+                ((MensagemChat.remetente_id == contato.id) & (MensagemChat.destinatario_id == user_id))
+            ).order_by(MensagemChat.timestamp.desc()).first()
+
+            resultado.append({
+                "id": contato.id,
+                "nome": contato.nome,
+                "email": contato.email,
+                "tipo": contato.tipo,
+                "nao_lidas": nao_lidas,
+                "ultima_mensagem": ultima_msg.conteudo if ultima_msg else None,
+                "timestamp_ultima_mensagem": ultima_msg.timestamp.isoformat() if ultima_msg and ultima_msg.timestamp else None
+            })
+
+        return jsonify(resultado), 200
+    except Exception as e:
+        return jsonify({"erro": str(e)}), 500
+
+@app.route('/api/chat/mensagens/<int:contato_id>', methods=['GET'])
+@jwt_required()
+def listar_mensagens_chat(contato_id):
+    try:
+        user_id = int(get_jwt_identity())
+        if not verificar_vinculo(user_id, contato_id):
+            return jsonify({"erro": "Você não possui vínculo com este usuário"}), 403
+
+        # Marcar mensagens recebidas como lidas
+        MensagemChat.query.filter_by(
+            remetente_id=contato_id,
+            destinatario_id=user_id,
+            lida=False
+        ).update({"lida": True})
+        db.session.commit()
+
+        mensagens = MensagemChat.query.filter(
+            ((MensagemChat.remetente_id == user_id) & (MensagemChat.destinatario_id == contato_id)) |
+            ((MensagemChat.remetente_id == contato_id) & (MensagemChat.destinatario_id == user_id))
+        ).order_by(MensagemChat.timestamp.asc()).all()
+
+        return jsonify([{
+            "id": m.id,
+            "remetente_id": m.remetente_id,
+            "destinatario_id": m.destinatario_id,
+            "conteudo": m.conteudo,
+            "timestamp": m.timestamp.isoformat() if m.timestamp else None,
+            "lida": m.lida,
+            "sou_eu": m.remetente_id == user_id
+        } for m in mensagens]), 200
+    except Exception as e:
+        return jsonify({"erro": str(e)}), 500
+
+@app.route('/api/chat/enviar', methods=['POST'])
+@jwt_required()
+def enviar_mensagem_chat():
+    try:
+        user_id = int(get_jwt_identity())
+        dados = request.get_json() or {}
+        destinatario_id = dados.get('destinatario_id')
+        conteudo = (dados.get('conteudo') or '').strip()
+
+        if not destinatario_id or not conteudo:
+            return jsonify({"erro": "Destinatário e conteúdo são obrigatórios"}), 400
+
+        if not verificar_vinculo(user_id, int(destinatario_id)):
+            return jsonify({"erro": "Você só pode enviar mensagens para usuários vinculados"}), 403
+
+        msg = MensagemChat(
+            remetente_id=user_id,
+            destinatario_id=int(destinatario_id),
+            conteudo=conteudo
+        )
+        db.session.add(msg)
+        db.session.commit()
+
+        return jsonify({
+            "id": msg.id,
+            "remetente_id": msg.remetente_id,
+            "destinatario_id": msg.destinatario_id,
+            "conteudo": msg.conteudo,
+            "timestamp": msg.timestamp.isoformat() if msg.timestamp else None,
+            "lida": msg.lida,
+            "sou_eu": True
+        }), 201
     except Exception as e:
         return jsonify({"erro": str(e)}), 500
 

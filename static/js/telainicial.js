@@ -40,6 +40,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderEmergencyContacts(); // New function
         setInterval(checkNotifications, 1000);
         
+        // Polling de mensagens de chat
+        verificarMensagensNaoLidasChat();
+        setInterval(verificarMensagensNaoLidasChat, 5000);
+
         // Solicitar permissão para Notificações Push nativas
         if ('Notification' in window && Notification.permission !== 'granted' && Notification.permission !== 'denied') {
             Notification.requestPermission();
@@ -642,4 +646,198 @@ async function enviarEmergencia() {
             window.open(url, '_blank');
         }, index * 1000);
     });
+}
+
+// ---------------------------------------------------------
+// FUNCIONALIDADE DO CHAT PACIENTE-CUIDADOR
+// ---------------------------------------------------------
+let currentChatContactId = null;
+let chatPollInterval = null;
+let chatContactsList = [];
+
+async function verificarMensagensNaoLidasChat() {
+    const token = localStorage.getItem('parkicare_token');
+    if (!token) return;
+
+    try {
+        const response = await fetch('/api/chat/contatos', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!response.ok) return;
+
+        const contatos = await response.json();
+        chatContactsList = contatos;
+        const totalNaoLidas = contatos.reduce((sum, c) => sum + (c.nao_lidas || 0), 0);
+
+        const badge = document.getElementById('badge-chat-paciente');
+        if (badge) {
+            if (totalNaoLidas > 0) {
+                badge.textContent = totalNaoLidas;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+    } catch (e) {
+        console.error("Erro ao verificar mensagens do chat:", e);
+    }
+}
+
+async function abrirModalChat() {
+    const modal = document.getElementById('chat-modal');
+    if (!modal) return;
+    modal.style.display = 'flex';
+    modal.classList.remove('hidden');
+
+    await carregarContatosChatModal();
+    if (chatPollInterval) clearInterval(chatPollInterval);
+    chatPollInterval = setInterval(carregarMensagensChatAtual, 3000);
+}
+
+function fecharModalChat() {
+    const modal = document.getElementById('chat-modal');
+    if (modal) {
+        modal.style.display = 'none';
+        modal.classList.add('hidden');
+    }
+    if (chatPollInterval) {
+        clearInterval(chatPollInterval);
+        chatPollInterval = null;
+    }
+}
+
+async function carregarContatosChatModal() {
+    const token = localStorage.getItem('parkicare_token');
+    const contactsBar = document.getElementById('chat-contacts-bar');
+    const titleEl = document.getElementById('chat-title');
+    const container = document.getElementById('chat-messages-container');
+
+    try {
+        const response = await fetch('/api/chat/contatos', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!response.ok) {
+            if (container) container.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">Erro ao carregar contatos.</div>';
+            return;
+        }
+
+        const contatos = await response.json();
+        chatContactsList = contatos;
+
+        if (contatos.length === 0) {
+            if (titleEl) titleEl.textContent = "Chat com Cuidador";
+            if (contactsBar) contactsBar.style.display = 'none';
+            if (container) container.innerHTML = '<div style="text-align:center; padding:30px; color:#666;"><p><strong>Nenhum cuidador vinculado.</strong></p><p style="font-size:0.85rem; margin-top:5px;">Compartilhe seu código de vínculo para se conectar a um cuidador.</p></div>';
+            currentChatContactId = null;
+            return;
+        }
+
+        if (contatos.length > 1) {
+            if (contactsBar) {
+                contactsBar.style.display = 'flex';
+                contactsBar.innerHTML = contatos.map(c => `
+                    <div class="contact-pill ${c.id === (currentChatContactId || contatos[0].id) ? 'active' : ''}" onclick="selecionarContatoChat(${c.id})">
+                        ${c.nome} ${c.nao_lidas ? `(${c.nao_lidas})` : ''}
+                    </div>
+                `).join('');
+            }
+        } else if (contactsBar) {
+            contactsBar.style.display = 'none';
+        }
+
+        if (!currentChatContactId || !contatos.some(c => c.id === currentChatContactId)) {
+            currentChatContactId = contatos[0].id;
+        }
+
+        const contatoAtivo = contatos.find(c => c.id === currentChatContactId) || contatos[0];
+        if (titleEl) titleEl.textContent = `Chat: ${contatoAtivo.nome}`;
+
+        await carregarMensagensChatAtual();
+    } catch (e) {
+        console.error("Erro ao carregar contatos no modal:", e);
+    }
+}
+
+function selecionarContatoChat(contatoId) {
+    currentChatContactId = contatoId;
+    carregarContatosChatModal();
+}
+
+async function carregarMensagensChatAtual() {
+    if (!currentChatContactId) return;
+    const token = localStorage.getItem('parkicare_token');
+    const container = document.getElementById('chat-messages-container');
+    if (!container) return;
+
+    try {
+        const response = await fetch(`/api/chat/mensagens/${currentChatContactId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!response.ok) return;
+
+        const mensagens = await response.json();
+        if (mensagens.length === 0) {
+            container.innerHTML = '<div style="text-align:center; padding:20px; color:#aaa; font-size:0.9rem;">Nenhuma mensagem ainda. Envie um oi! 👋</div>';
+            return;
+        }
+
+        const html = mensagens.map(m => {
+            const hora = m.timestamp ? new Date(m.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+            return `
+                <div class="chat-msg-bubble ${m.sou_eu ? 'sent' : 'received'}">
+                    <div>${escapeHtml(m.conteudo)}</div>
+                    <div class="chat-msg-time">${hora}</div>
+                </div>
+            `;
+        }).join('');
+
+        const shouldScroll = container.scrollTop + container.clientHeight >= container.scrollHeight - 50;
+        container.innerHTML = html;
+        if (shouldScroll || container.dataset.initialLoad !== 'true') {
+            container.scrollTop = container.scrollHeight;
+            container.dataset.initialLoad = 'true';
+        }
+
+        verificarMensagensNaoLidasChat();
+    } catch (e) {
+        console.error("Erro ao carregar mensagens:", e);
+    }
+}
+
+async function enviarMensagemAtual() {
+    const input = document.getElementById('chat-input-text');
+    if (!input || !currentChatContactId) return;
+    const texto = input.value.trim();
+    if (!texto) return;
+
+    const token = localStorage.getItem('parkicare_token');
+    input.value = '';
+
+    try {
+        const response = await fetch('/api/chat/enviar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                destinatario_id: currentChatContactId,
+                conteudo: texto
+            })
+        });
+
+        if (response.ok) {
+            await carregarMensagensChatAtual();
+        } else {
+            const err = await response.json();
+            alert(err.erro || "Erro ao enviar mensagem.");
+        }
+    } catch (e) {
+        console.error("Erro ao enviar mensagem:", e);
+    }
+}
+
+function escapeHtml(text) {
+    if (!text) return '';
+    return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 }
