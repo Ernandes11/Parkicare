@@ -5,6 +5,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ParkiCare</title>
+  <link rel="manifest" href="/static/manifest.json">
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/static/sw.js').catch(e => console.log(e));
+    }
+  </script>
   <link rel="stylesheet" href="/static/css/telaininicial.css" />
   <link rel="stylesheet" href="/static/css/accessibility.css" />
   <script src="/static/js/accessibility-loader.js"></script>
@@ -83,11 +89,26 @@
 
       <div class="action-card tests-card" onclick="irPara('/tremores')">
         <div class="card-info">
-            <h3>Testes de Coodernação</h3>
+            <h3>Testes de Coordenação</h3>
             <p>Avaliar habilidades motoras</p>
         </div>
         <img src="/static/img/aprovacao.png" alt="Doc" class="card-icon">
       </div>
+    </div>
+
+    <div style="margin-top: 15px; text-align: center;">
+      <button onclick="abrirHistoricoDoses()" style="background: none; border: none; color: #3FA34D; font-weight: 600; text-decoration: underline; cursor: pointer; font-size: 0.95rem;">
+        📜 Ver Histórico de Doses
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal Histórico Doses -->
+  <div id="historico-doses-modal" class="modal-overlay hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000;">
+    <div style="background: white; padding: 25px; border-radius: 20px; max-width: 380px; width: 90%; max-height: 80vh; overflow-y: auto;">
+      <h2 style="margin-bottom: 15px; color: #2F7A3B; text-align: center;">Histórico de Doses</h2>
+      <div id="lista-historico-doses" style="display: flex; flex-direction: column; gap: 10px;"></div>
+      <button onclick="fecharHistoricoDoses()" style="margin-top: 20px; width: 100%; padding: 12px; border: none; background: #999; color: white; border-radius: 12px; font-weight: 700; cursor: pointer;">Fechar</button>
     </div>
   </div>
 

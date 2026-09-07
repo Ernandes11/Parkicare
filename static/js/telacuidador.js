@@ -194,7 +194,12 @@ async function carregarAlertas() {
 
         const agora = Date.now();
         alertas.forEach(a => {
-            const quandoMs = a.timestamp ? new Date(a.timestamp + 'Z').getTime() : agora;
+            let quandoMs = agora;
+            if (a.timestamp) {
+                const tsStr = a.timestamp.endsWith('Z') ? a.timestamp : a.timestamp + 'Z';
+                const parsed = new Date(tsStr).getTime();
+                if (!isNaN(parsed)) quandoMs = parsed;
+            }
             const minutosAtras = Math.max(0, Math.round((agora - quandoMs) / 60000));
             const recente = minutosAtras <= 5;
 

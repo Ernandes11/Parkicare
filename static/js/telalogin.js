@@ -49,12 +49,19 @@ if (form) {
                 throw new Error(result.erro || 'Falha no login');
             }
 
-            // Save Token and User ID
+            // Save Token, User ID, and Type
             localStorage.setItem('parkicare_token', result.token);
             localStorage.setItem('parkicare_user_id', result.usuario_id);
+            if (result.tipo) {
+                localStorage.setItem('parkicare_tipo', result.tipo);
+            }
 
-            // Redirect
-            window.location.href = '/proxima';
+            // Redirect: cuidadores vão direto para a área de cuidador
+            if (result.tipo === 'cuidador') {
+                window.location.href = '/cuidador';
+            } else {
+                window.location.href = '/proxima';
+            }
 
         } catch (err) {
             console.error("Erro login:", err);

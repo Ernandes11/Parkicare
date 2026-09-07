@@ -97,6 +97,8 @@ function renderSavedContacts() {
     const listDiv = document.getElementById('lista-contatos-config');
     if (!listDiv || !currentUser) return;
 
+    listDiv.innerHTML = '';
+
     if (currentUser.whatsapp) {
         listDiv.innerHTML += `
             <div class="contact-pill">

@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime
+from datetime import datetime, timezone
 import os
 import random
 import string
@@ -56,7 +56,7 @@ class Vinculo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     paciente_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=False)
     cuidador_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=False)
-    criado_em = db.Column(db.DateTime, default=datetime.utcnow)
+    criado_em = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
     __table_args__ = (
         db.UniqueConstraint('paciente_id', 'cuidador_id', name='uq_vinculo_paciente_cuidador'),
@@ -80,8 +80,24 @@ class Alerta(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'))
     tipo = db.Column(db.String(50), default='emergencia')
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    timestamp = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     descricao = db.Column(db.Text)
+
+class TesteTremores(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=False)
+    pontuacao = db.Column(db.Float, nullable=False)
+    desvio = db.Column(db.Float, nullable=True)
+    timestamp = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+
+class HistoricoMedicamento(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=False)
+    medicamento_id = db.Column(db.Integer, db.ForeignKey('medicamento.id'), nullable=True)
+    nome_medicamento = db.Column(db.String(100), nullable=False)
+    horario_previsto = db.Column(db.String(10), nullable=True)
+    data_registro = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    status = db.Column(db.String(50), nullable=False)
 
 def gerar_codigo_vinculo():
     """Gera um código curto e único (ex: 'A1B2C3') para o paciente
@@ -169,7 +185,7 @@ def resolver_paciente_alvo(usuario_logado_id, paciente_id_solicitado):
     Retorna (paciente_id, None) em caso de sucesso, ou (None, (mensagem, http_status))
     em caso de erro.
     """
-    usuario_logado = Usuario.query.get(usuario_logado_id)
+    usuario_logado = db.session.get(Usuario, usuario_logado_id)
     if not usuario_logado:
         return None, ("Usuário não encontrado", 404)
 
@@ -491,6 +507,15 @@ def atualizar_status(med_id):
             return jsonify({"erro": "Medicamento não encontrado"}), 404
 
         med.tomado = data.get('tomado', not med.tomado)
+        status_txt = 'Tomado' if med.tomado else 'Desmarcado'
+        log = HistoricoMedicamento(
+            usuario_id=paciente_id,
+            medicamento_id=med.id,
+            nome_medicamento=med.nome,
+            horario_previsto=med.horario,
+            status=status_txt
+        )
+        db.session.add(log)
         db.session.commit()
         return jsonify({"msg": "Status atualizado", "tomado": med.tomado}), 200
     except Exception as e:
@@ -502,7 +527,7 @@ def atualizar_status(med_id):
 def get_perfil():
     try:
         user_id = int(get_jwt_identity())
-        user = Usuario.query.get(user_id)
+        user = db.session.get(Usuario, user_id)
         if not user:
             return jsonify({"erro": "Usuário não encontrado"}), 404
 
@@ -525,7 +550,7 @@ def get_perfil():
 def update_perfil():
     try:
         user_id = int(get_jwt_identity())
-        user = Usuario.query.get(user_id)
+        user = db.session.get(Usuario, user_id)
         if not user:
             return jsonify({"erro": "Usuário não encontrado"}), 404
 
@@ -547,7 +572,7 @@ def update_perfil():
 def enviar_emergencia():
     try:
         user_id = int(get_jwt_identity())
-        paciente = Usuario.query.get(user_id)
+        paciente = db.session.get(Usuario, user_id)
         data = request.json or {}
 
         # Salvar alerta de emergência no banco
@@ -596,7 +621,7 @@ def criar_vinculo():
     """Cuidador informa o código do paciente para se vincular a ele."""
     try:
         cuidador_id = int(get_jwt_identity())
-        cuidador = Usuario.query.get(cuidador_id)
+        cuidador = db.session.get(Usuario, cuidador_id)
         if not cuidador:
             return jsonify({"erro": "Usuário não encontrado"}), 404
         if cuidador.tipo != 'cuidador':
@@ -727,6 +752,69 @@ def relatorio():
             "unidade": m.unidade or 'mg',
             "status": 'Tomado' if m.tomado else 'Pendente'
         } for m in meds]), 200
+    except Exception as e:
+        return jsonify({"erro": str(e)}), 500
+
+@app.route('/api/tremores', methods=['POST'])
+@jwt_required()
+def salvar_teste_tremores():
+    try:
+        user_id = int(get_jwt_identity())
+        data = request.json or {}
+        pontuacao = data.get('pontuacao')
+        if pontuacao is None:
+            return jsonify({"erro": "Pontuação é obrigatória"}), 400
+
+        teste = TesteTremores(
+            usuario_id=user_id,
+            pontuacao=float(pontuacao),
+            desvio=float(data.get('desvio', 0.0))
+        )
+        db.session.add(teste)
+        db.session.commit()
+        return jsonify({"msg": "Teste de tremores salvo com sucesso", "id": teste.id, "pontuacao": teste.pontuacao}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"erro": str(e)}), 500
+
+@app.route('/api/tremores', methods=['GET'])
+@jwt_required()
+def listar_testes_tremores():
+    try:
+        user_id = int(get_jwt_identity())
+        paciente_id_param = request.args.get('paciente_id', type=int)
+        paciente_id, erro = resolver_paciente_alvo(user_id, paciente_id_param)
+        if erro:
+            return jsonify({"erro": erro[0]}), erro[1]
+
+        testes = TesteTremores.query.filter_by(usuario_id=paciente_id).order_by(TesteTremores.timestamp.desc()).all()
+        return jsonify([{
+            "id": t.id,
+            "pontuacao": t.pontuacao,
+            "desvio": t.desvio,
+            "timestamp": t.timestamp.isoformat() if t.timestamp else None
+        } for t in testes]), 200
+    except Exception as e:
+        return jsonify({"erro": str(e)}), 500
+
+@app.route('/api/medicamentos/historico', methods=['GET'])
+@jwt_required()
+def historico_medicamentos():
+    try:
+        user_id = int(get_jwt_identity())
+        paciente_id_param = request.args.get('paciente_id', type=int)
+        paciente_id, erro = resolver_paciente_alvo(user_id, paciente_id_param)
+        if erro:
+            return jsonify({"erro": erro[0]}), erro[1]
+
+        logs = HistoricoMedicamento.query.filter_by(usuario_id=paciente_id).order_by(HistoricoMedicamento.data_registro.desc()).limit(50).all()
+        return jsonify([{
+            "id": l.id,
+            "nome_medicamento": l.nome_medicamento,
+            "horario_previsto": l.horario_previsto,
+            "data_registro": l.data_registro.isoformat() if l.data_registro else None,
+            "status": l.status
+        } for l in logs]), 200
     except Exception as e:
         return jsonify({"erro": str(e)}), 500
 

@@ -40,16 +40,40 @@
 
     <canvas id="desenho" width="325" height="325"></canvas>
 
+    <div id="resultado-analise" class="resultado-box" style="display:none; margin: 15px 0; padding: 15px; background: #ffffff; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center;">
+      <h3 style="color: #2F7A3B; margin-bottom: 5px;">Resultado da Análise</h3>
+      <p id="score-texto" style="font-size: 1.3rem; font-weight: 700; color: #333; margin: 5px 0;">Estabilidade: --%</p>
+      <p id="feedback-texto" style="font-size: 0.95rem; color: #666;"></p>
+    </div>
+
     <div class="botoes">
       <button class="btn refazer">
         <img src="/static/img/icone_refazer_novo.png" class="icon">
         Refazer
       </button>
 
-      <button class="btn exportar">
-
-        Exportar desenho
+      <button class="btn btn-analisar" id="btn-analisar" style="background-color: #3FA34D; color: white;">
+        Analisar Traço
       </button>
+
+      <button class="btn exportar">
+        Exportar PDF
+      </button>
+    </div>
+
+    <div style="margin-top: 15px; text-align: center;">
+      <button id="btn-ver-historico" style="background: none; border: none; color: #2F7A3B; font-weight: 600; text-decoration: underline; cursor: pointer;">
+        Ver histórico de testes
+      </button>
+    </div>
+
+    <!-- Modal Histórico -->
+    <div id="historico-modal" class="modal-overlay hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000;">
+      <div style="background: white; padding: 25px; border-radius: 20px; max-width: 350px; width: 90%; max-height: 80vh; overflow-y: auto;">
+        <h2 style="margin-bottom: 15px; color: #2F7A3B; text-align: center;">Histórico de Testes</h2>
+        <div id="lista-historico-tremores" style="display: flex; flex-direction: column; gap: 10px;"></div>
+        <button id="btn-fechar-historico" style="margin-top: 20px; width: 100%; padding: 12px; border: none; background: #E94F37; color: white; border-radius: 12px; font-weight: 700; cursor: pointer;">Fechar</button>
+      </div>
     </div>
 
   </div>

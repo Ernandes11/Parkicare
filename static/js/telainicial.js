@@ -39,6 +39,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderMedicamentos();
         renderEmergencyContacts(); // New function
         setInterval(checkNotifications, 1000);
+        
+        // Solicitar permissão para Notificações Push nativas
+        if ('Notification' in window && Notification.permission !== 'granted' && Notification.permission !== 'denied') {
+            Notification.requestPermission();
+        }
     }
 });
 
@@ -322,13 +327,9 @@ async function checkNotifications() {
         const match = doseTimes.some(totalMins => totalMins === currentTotalMinutes);
 
         if (match) {
-            // Check uniqueness of alert (med.id + time?)
-            // For simplicity, just check med.id. If they have to take it twice a day, 
-            // locking by ID means valid for only one alert session. 
-            // Optimization: Add time to alerted key or reset alertedMeds daily/on complete.
-            // Current simplistic logic:
-            if (!alertedMeds.has(med.id)) {
-                alertedMeds.add(med.id);
+            const alertKey = `${med.id}_${currentTotalMinutes}`;
+            if (!alertedMeds.has(alertKey)) {
+                alertedMeds.add(alertKey);
                 currentMedId = med.id;
                 showModal(med.id, med.nome, med.foto);
             }
@@ -359,6 +360,18 @@ function showModal(medId, medNome, medFoto) {
 
         playSound();
         modal.classList.remove('hidden');
+
+        // Notificação Push Nativa do Navegador/SO
+        if ('Notification' in window && Notification.permission === 'granted') {
+            try {
+                new Notification('Hora da Medicação! - ParkiCare', {
+                    body: `Está na hora de tomar: ${medNome || 'Seu medicamento'}`,
+                    icon: medFoto || '/static/img/icone_medicamentos_novo.png'
+                });
+            } catch (e) {
+                console.error("Erro ao disparar notificação nativa:", e);
+            }
+        }
 
         let countdown = 10;
         if (button) {
@@ -426,7 +439,59 @@ async function confirmarTomada() {
 }
 
 async function logHistory(medId, medNome, status) {
-    // Optional for now or implemented via separate activity endpoint
+    // Registro automático de histórico na API
+}
+
+async function abrirHistoricoDoses() {
+    const modal = document.getElementById('historico-doses-modal');
+    const container = document.getElementById('lista-historico-doses');
+    const token = localStorage.getItem('parkicare_token');
+
+    if (!modal || !container) return;
+    modal.style.display = 'flex';
+    modal.classList.remove('hidden');
+    container.innerHTML = '<p style="text-align: center;">Carregando histórico...</p>';
+
+    try {
+        const response = await fetch('/api/medicamentos/historico', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!response.ok) throw new Error('Erro ao buscar histórico');
+
+        const logs = await response.json();
+        container.innerHTML = '';
+
+        if (logs.length === 0) {
+            container.innerHTML = '<p style="text-align: center; color: #666;">Nenhum registro no histórico ainda.</p>';
+            return;
+        }
+
+        logs.forEach(l => {
+            const dataStr = l.data_registro ? new Date(l.data_registro).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '';
+            const item = document.createElement('div');
+            item.style.cssText = 'padding: 10px 14px; background: #F8F9FA; border-radius: 10px; display: flex; justify-content: space-between; align-items: center;';
+            const statusColor = l.status === 'Tomado' ? '#3FA34D' : (l.status === 'Atrasado' ? '#E94F37' : '#888');
+            item.innerHTML = `
+                <div>
+                    <strong>${l.nome_medicamento}</strong> (${l.horario_previsto || '--:--'})
+                    <div style="font-size: 0.8rem; color: #777;">${dataStr}</div>
+                </div>
+                <span style="font-weight: bold; color: ${statusColor};">${l.status}</span>
+            `;
+            container.appendChild(item);
+        });
+    } catch (e) {
+        console.error(e);
+        container.innerHTML = '<p style="color: red; text-align: center;">Erro ao carregar histórico.</p>';
+    }
+}
+
+function fecharHistoricoDoses() {
+    const modal = document.getElementById('historico-doses-modal');
+    if (modal) {
+        modal.style.display = 'none';
+        modal.classList.add('hidden');
+    }
 }
 
 // ---------------------------------------------------------

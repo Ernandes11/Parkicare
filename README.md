@@ -2,25 +2,34 @@
 
 Um aplicativo web para gerenciamento de medicamentos e monitoramento de tremores, desenvolvido especialmente para pacientes com Parkinson.
 
+🌐 **Acesse a aplicação ao vivo**: [https://parkicare-q40i.onrender.com/primeira](https://parkicare-q40i.onrender.com/primeira)
+
+---
+
 ## ✨ Funcionalidades
 
-- 💊 **Gerenciamento de Medicamentos**: Cadastar, listar e acompanhar medicamentos
-- 🚨 **Alerta de Emergência**: Sistema de alerta com contagem regressiva e notificações
-- 📊 **Teste de Tremores**: Avaliação de motricidade fina
-- 🔐 **Autenticação Segura**: Login e cadastro com JWT
-- 📱 **Responsivo**: Interface adaptada para dispositivos móveis
-- ♿ **Acessibilidade**: Suporte para navegação com teclado
+- 💊 **Gerenciamento de Medicamentos**: Cadastrar, listar, registrar tomadas e acompanhar medicação com foto da caixa/cartela.
+- 📜 **Dashboard com Histórico de Medicamentos**: Linha do tempo e histórico detalhado das doses registradas.
+- 🚨 **Alerta de Emergência**: Sistema de alerta por WhatsApp com contagem regressiva e notificação simultânea para cuidadores vinculados.
+- 📊 **Análise de Dados de Tremores**: Avaliação e pontuação de estabilidade da motricidade fina via desenho de espiral.
+- 🔔 **Notificações Push**: Alertas sonoros, vibratórios e notificações nativas do sistema no horário dos remédios.
+- 📱 **Interface Mobile Nativa (PWA)**: Aplicativo web progressivo instalável na tela inicial de dispositivos móveis.
+- 🔐 **Autenticação Segura**: Login e cadastro com perfis distintos (Paciente e Cuidador) protegidos por JWT.
+- ♿ **Acessibilidade**: Alto contraste, opções de tamanho de botões/fontes e suporte para navegabilidade adaptada.
 
 ---
 
 ## 🚀 Começando
 
-### Pré-requisitos
+### Link de Acesso Público
+- 🌐 [https://parkicare-q40i.onrender.com/primeira](https://parkicare-q40i.onrender.com/primeira)
+
+### Pré-requisitos para Execução Local
 
 - Python 3.8+
 - pip (gerenciador de pacotes)
 
-### Instalação
+### Instalação Local
 
 1. **Clone o repositório**
 ```bash
@@ -57,27 +66,27 @@ ParkiCare/
 │
 ├── app.py                    # Servidor Flask principal e APIs
 ├── requirements.txt          # Dependências Python (Flask, JWT, SQLAlchemy, etc.)
-├── README.md                 # Este arquivo de documentação
+├── README.md                 # Documentação principal
 ├── .gitignore                # Arquivos a ignorar no repositório Git
 │
 ├── templates/                # Arquivos HTML das telas do sistema
-│   ├── index.html            # Tela de boas-vindas / Apresentação
+│   ├── index.html            # Redirecionador inicial
 │   ├── telacadastro.html     # Tela de cadastro (paciente ou cuidador)
 │   ├── telalogin.html        # Tela de login
 │   ├── telainicial.html      # Dashboard principal do paciente
 │   ├── telacuidador.html     # Painel de acompanhamento do cuidador
 │   ├── telamedicamento.html  # Gerenciamento de medicamentos
-│   ├── configs.html          # Configurações e atualização do perfil
-│   ├── telaprimeira.html     # Tutorial inicial - Parte 1
+│   ├── configs.html          # Configurações e acessibilidade
+│   ├── telaprimeira.html     # Tutorial inicial / Splash - Parte 1
 │   ├── telaproxima.html      # Tutorial inicial - Parte 2
 │   └── teste.tremores.html   # Teste de tremores (motricidade fina)
 │
 ├── static/                   # Arquivos estáticos servidos pelo Flask
-│   ├── css/                  # Estilos CSS específicos de cada página/componente
-│   ├── js/                   # Scripts JavaScript (lógica do frontend e APIs)
-│   │   ├── utils.js          # Funções utilitárias globais
-│   │   └── ...               # Outros scripts das telas
-│   ├── audio/                # Arquivos de som do sistema
+│   ├── manifest.json         # Manifest do PWA
+│   ├── sw.js                 # Service Worker PWA
+│   ├── css/                  # Estilos CSS de cada tela
+│   ├── js/                   # Scripts JavaScript frontend e APIs
+│   ├── audio/                # Som de alerta configurável
 │   └── img/                  # Imagens e ícones
 │
 └── instance/
@@ -95,22 +104,26 @@ ParkiCare/
 - `GET /api/perfil` - Obter dados de perfil do usuário logado (requer JWT)
 - `PUT /api/perfil` - Atualizar informações de perfil (requer JWT)
 
-### Medicamentos (requer autenticação JWT)
+### Medicamentos & Histórico (requer autenticação JWT)
 - `GET /api/medicamentos` - Listar todos os medicamentos do paciente logado
 - `POST /api/medicamentos` - Adicionar novo medicamento
-- `PUT /api/medicamentos/<id>/status` - Alternar status de tomada do medicamento (marcar/desmarcar)
+- `PUT /api/medicamentos/<id>/status` - Alternar status de tomada do medicamento (registra no histórico)
 - `DELETE /api/medicamentos/<id>` - Remover um medicamento cadastrado
-- `GET /api/relatorio` - Obter histórico de medicamentos para exportar relatório
+- `GET /api/medicamentos/historico` - Listar histórico detalhado de doses registradas
+- `GET /api/relatorio` - Obter dados de medicamentos para exportação CSV
+
+### Análise de Tremores (requer autenticação JWT)
+- `POST /api/tremores` - Salvar pontuação e desvio do teste de motricidade fina
+- `GET /api/tremores` - Listar histórico de testes de tremores
 
 ### Emergência (requer autenticação JWT)
-- `POST /api/emergencia` - Disparar alerta de emergência, registrar no banco de dados e retornar contatos/cuidadores cadastrados
+- `POST /api/emergencia` - Disparar alerta de emergência, registrar no banco e notificar cuidadores
 
 ### Vínculo Cuidador & Paciente (requer autenticação JWT)
 - `POST /api/vinculo` - Cuidador conecta-se a um paciente fornecendo o código de vínculo deste
-- `GET /api/vinculo/pacientes` - Listar todos os pacientes vinculados ao cuidador logado
-- `DELETE /api/vinculo/<id>` - Cuidador remove o vínculo com um paciente específico
-- `GET /api/vinculo/alertas` - Listar os alertas de emergência recentes de todos os pacientes vinculados ao cuidador
-- `GET /api/vinculo/meus-cuidadores` - Paciente lista quais cuidadores estão vinculados ao seu perfil
+- `GET /api/vinculo/pacientes` - Listar todos os pacientes vinculados ao cuidador
+- `DELETE /api/vinculo/<id>` - Remover vínculo
+- `GET /api/vinculo/alertas` - Listar os alertas de emergência dos pacientes vinculados
 
 ---
 
@@ -120,130 +133,36 @@ O projeto usa **JWT (JSON Web Tokens)** para proteger as rotas de dados.
 1. Após login bem-sucedido via `POST /api/login`, o frontend armazena o token recebido no `localStorage`.
 2. Em todas as requisições autenticadas subsequentes, o token deve ser incluído no cabeçalho HTTP:
    `Authorization: Bearer <seu_token>`
-3. O servidor valida o token e extrai a identidade do usuário.
 
 ---
 
 ## 📊 Banco de Dados
 
-O sistema utiliza SQLite com ORM SQLAlchemy. A estrutura de tabelas é descrita a seguir:
-
-### Tabela: `usuario`
-- `id` (Integer, PK) - Identificador único do usuário.
-- `email` (String, único) - E-mail de login.
-- `senha` (String) - Hash criptografado da senha.
-- `nome` (String) - Nome completo.
-- `tipo` (String) - Define a função do usuário: `'paciente'` ou `'cuidador'`.
-- `whatsapp` (String) - Telefone do primeiro contato de emergência (apenas para pacientes).
-- `whatsapp2` (String) - Telefone do segundo contato de emergência (apenas para pacientes, opcional).
-- `nome_contato` (String) - Nome do primeiro contato de emergência (apenas para pacientes).
-- `nome_contato2` (String) - Nome do segundo contato de emergência (apenas para pacientes, opcional).
-- `codigo_vinculo` (String, único) - Código gerado automaticamente para que o paciente o forneça ao seu cuidador.
-
-### Tabela: `vinculo`
-- `id` (Integer, PK) - Identificador único da relação.
-- `paciente_id` (Integer, FK) - Referência ao `id` do paciente na tabela `usuario`.
-- `cuidador_id` (Integer, FK) - Referência ao `id` do cuidador na tabela `usuario`.
-- `criado_em` (DateTime) - Data e hora de criação do vínculo.
-*(Nota: Há uma restrição única para evitar duplicidades no par paciente/cuidador).*
-
-### Tabela: `medicamento`
-- `id` (Integer, PK) - Identificador único do medicamento.
-- `nome` (String) - Nome comercial ou princípio ativo.
-- `dosagem` (String) - Concentração/dosagem do remédio (ex: "50mg", "1 comprimido").
-- `horario` (String) - Horário definido para administração.
-- `intervalo` (Integer) - Intervalo de tomada em horas (ex: 8 para 8 em 8h).
-- `unidade` (String) - Unidade de medida (default: `'mg'`).
-- `usuario_id` (Integer, FK) - ID do paciente dono deste medicamento.
-- `tomado` (Boolean) - Status de tomada diária do medicamento.
-
-### Tabela: `alerta`
-- `id` (Integer, PK) - Identificador do alerta registrado.
-- `usuario_id` (Integer, FK) - ID do paciente que disparou o alerta de emergência.
-- `tipo` (String) - Tipo do alerta (ex: `'emergencia'`).
-- `timestamp` (DateTime) - Data e hora exata do ocorrido.
-- `descricao` (Text) - Detalhes adicionais sobre o alerta de emergência.
-
----
-
-## 🛠️ Desenvolvimento
-
-### Adicionar uma nova página
-
-1. Crie o HTML em `templates/novo_page.html`
-2. Crie a rota em `app.py`:
-```python
-@app.route('/nova-pagina')
-def nova_pagina():
-    return render_template('novo_page.html')
-```
-
-### Adicionar uma API
-
-1. Crie a rota em `app.py`:
-```python
-@app.route('/api/novo-endpoint', methods=['POST'])
-@jwt_required()
-def novo_endpoint():
-    data = request.json
-    # Lógica aqui
-    return jsonify({"msg": "Sucesso"}), 200
-```
+O sistema utiliza SQLite com ORM SQLAlchemy:
+- `usuario`: Dados cadastrais, perfil de paciente/cuidador, contatos de emergência e código de vínculo.
+- `vinculo`: Relação entre cuidadores e pacientes acompanhados.
+- `medicamento`: Informações dos remédios, foto da caixa/cartela e horários.
+- `historico_medicamento`: Registro temporal das doses tomadas ou pendentes.
+- `alerta`: Registro de emergências disparadas.
+- `teste_tremores`: Histórico e pontuações do teste de estabilidade de motricidade fina.
 
 ---
 
 ## 📝 Stack Tecnológico
 
 - **Backend**: Flask (Python)
-- **Frontend**: HTML5, CSS3, JavaScript vanilla
-- **Banco de Dados**: SQLite
+- **Frontend**: HTML5, CSS3, JavaScript vanilla, PWA (Progressive Web App)
+- **Banco de Dados**: SQLite / SQLAlchemy
 - **Autenticação**: JWT (Flask-JWT-Extended)
 - **Segurança**: Werkzeug (password hashing)
 - **CORS**: Flask-CORS
 
 ---
 
-## 📝 Commits Recentes
-
-- ✅ Adaptar projeto para Flask com estrutura MVC
-- ✅ Implementar sistema de emergência com animações
-- ✅ Melhorar autenticação e validações
-- ✅ Adicionar .gitignore
-
----
-
-## 🐛 Troubleshooting
-
-**Erro: Port 5000 already in use**
-```bash
-# Mude a porta em app.py:
-app.run(debug=True, host='127.0.0.1', port=5001)
-```
-
-**Erro: Database locked**
-```bash
-# Delete o banco e deixe ser recriado:
-rm instance/database.db
-python app.py
-```
-
-**Erro: ModuleNotFoundError**
-```bash
-# Reinstale as dependências:
-rm venv -rf (opcional)
-pip install --upgrade -r requirements.txt
-```
-
----
-
 ## 🚀 Próximos Passos
 
-- [ ] Integração com WhatsApp API para alertas de emergência
-- [ ] Dashboard com histórico de medicamentos
-- [ ] Notificações push
-- [ ] Sincronização com contatos de emergência
-- [ ] Análise de dados de tremores
-- [ ] Interface mobile nativa
+- [ ] Suporte a relatórios médicos em formato PDF com gráficos de evolução
+- [ ] Lembretes inteligentes baseados em localização
 
 ---
 
@@ -255,8 +174,7 @@ Este projeto é de código aberto e pode ser usado livremente.
 
 ## 👨‍💻 Desenvolvimento
 
+**Link Público Render**: [https://parkicare-q40i.onrender.com/primeira](https://parkicare-q40i.onrender.com/primeira)  
 **GitHub**: [nicollyfagundes8/ParkiCare](https://github.com/nicollyfagundes8/ParkiCare)
 
 Desenvolvido para o projeto ParkiCare - Cuidados com Parkinson
-
-**Última atualização**: 12 de Abril de 2026

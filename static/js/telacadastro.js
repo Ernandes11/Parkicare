@@ -108,7 +108,13 @@ if (form) {
     // Validation
     if (!nome) showError('nome', 'Preencha o nome.');
     if (!email || !/\S+@\S+\.\S+/.test(email)) showError('email', 'Email inválido.');
-    if (!senhaValor || senhaValor.length < 6) showError('senha', 'Senha deve ter no mínimo 6 caracteres.');
+    if (!senhaValor || senhaValor.length < 8) {
+      showError('senha', 'A senha deve ter no mínimo 8 caracteres.');
+    } else if (!/[a-zA-Z]/.test(senhaValor)) {
+      showError('senha', 'A senha deve conter pelo menos uma letra.');
+    } else if (!/[0-9]/.test(senhaValor)) {
+      showError('senha', 'A senha deve conter pelo menos um número.');
+    }
     if (senhaValor !== confirmarSenha) showError('confirmar-senha', 'As senhas não coincidem.');
     
     if (tipo === 'paciente') {
@@ -140,7 +146,6 @@ if (form) {
         payload.whatsapp2 = whatsapp2;
         payload.nome_contato2 = nomeContato2;
       } else {
-        // Cuidadores precisam enviar nome_contato obrigatório no app.py para validação
         payload.nome_contato = "Cuidador"; 
       }
 
@@ -161,7 +166,12 @@ if (form) {
 
     } catch (err) {
       console.error("Erro cadastro:", err);
-      showError('email', err.message || 'Tente novamente.');
+      const msg = err.message || 'Tente novamente.';
+      if (msg.toLowerCase().includes('senha')) {
+        showError('senha', msg);
+      } else {
+        showError('email', msg);
+      }
     } finally {
       const btn = form.querySelector('button.btn-primary');
       if (btn) {
